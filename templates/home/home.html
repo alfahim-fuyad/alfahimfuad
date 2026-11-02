@@ -414,46 +414,131 @@
 </section>
 
 <!-- ===================================================
-     SKILL PROFICIENCY — animated bars
+     3D SKILL CUBES — floating rotating cubes
      =================================================== -->
 <section class="section container-x">
   <h2 class="section-title reveal">Skill Proficiency</h2>
   <p class="section-sub reveal">
-    A quick look at where I'm strongest. Bars animate when scrolled into view.
+    Each cube represents a core skill. Hover to glow, click to flip and see details.
   </p>
 
-  <div class="skills-bars reveal">
-    <div class="skill-bar-row" data-pct="92">
-      <span class="skill-bar-name">Python</span>
-      <div class="skill-bar-track"><div class="skill-bar-fill"></div></div>
-      <span class="skill-bar-pct">92%</span>
+  <div class="cubes-stage reveal" id="cubesStage">
+    <div class="cube-wrap">
+      <div class="cube" data-pct="72" tabindex="0" role="button" aria-label="Python skill — click to flip">
+        <div class="cube-face cube-front">
+          <span class="cube-icon">🐍</span>
+          <span class="cube-name">Python</span>
+          <span class="cube-pct">72%</span>
+        </div>
+        <div class="cube-face cube-back">
+          <span class="cube-detail-title">Python</span>
+          <span class="cube-detail-text">Primary language for data science, ML &amp; backend. 3+ years.</span>
+          <span class="cube-detail-pct">72%</span>
+        </div>
+        <div class="cube-face cube-top"></div>
+        <div class="cube-face cube-bottom"></div>
+        <div class="cube-face cube-left"></div>
+        <div class="cube-face cube-right"></div>
+      </div>
     </div>
-    <div class="skill-bar-row" data-pct="88">
-      <span class="skill-bar-name">Machine Learning</span>
-      <div class="skill-bar-track"><div class="skill-bar-fill"></div></div>
-      <span class="skill-bar-pct">88%</span>
+
+    <div class="cube-wrap">
+      <div class="cube" data-pct="70" tabindex="0" role="button" aria-label="Machine Learning skill — click to flip">
+        <div class="cube-face cube-front">
+          <span class="cube-icon">🤖</span>
+          <span class="cube-name">ML</span>
+          <span class="cube-pct">70%</span>
+        </div>
+        <div class="cube-face cube-back">
+          <span class="cube-detail-title">Machine Learning</span>
+          <span class="cube-detail-text">scikit-learn, model evaluation &amp; deployment. 5+ production models.</span>
+          <span class="cube-detail-pct">70%</span>
+        </div>
+        <div class="cube-face cube-top"></div>
+        <div class="cube-face cube-bottom"></div>
+        <div class="cube-face cube-left"></div>
+        <div class="cube-face cube-right"></div>
+      </div>
     </div>
-    <div class="skill-bar-row" data-pct="85">
-      <span class="skill-bar-name">Django</span>
-      <div class="skill-bar-track"><div class="skill-bar-fill"></div></div>
-      <span class="skill-bar-pct">85%</span>
+
+    <div class="cube-wrap">
+      <div class="cube" data-pct="65" tabindex="0" role="button" aria-label="Django skill — click to flip">
+        <div class="cube-face cube-front">
+          <span class="cube-icon">⚙️</span>
+          <span class="cube-name">Django</span>
+          <span class="cube-pct">65%</span>
+        </div>
+        <div class="cube-face cube-back">
+          <span class="cube-detail-title">Django</span>
+          <span class="cube-detail-text">Full-stack Django apps, REST APIs, PostgreSQL. 2+ years.</span>
+          <span class="cube-detail-pct">65%</span>
+        </div>
+        <div class="cube-face cube-top"></div>
+        <div class="cube-face cube-bottom"></div>
+        <div class="cube-face cube-left"></div>
+        <div class="cube-face cube-right"></div>
+      </div>
     </div>
-    <div class="skill-bar-row" data-pct="80">
-      <span class="skill-bar-name">Data Analysis (Pandas / SQL)</span>
-      <div class="skill-bar-track"><div class="skill-bar-fill"></div></div>
-      <span class="skill-bar-pct">80%</span>
+
+    <div class="cube-wrap">
+      <div class="cube" data-pct="80" tabindex="0" role="button" aria-label="Data Analysis skill — click to flip">
+        <div class="cube-face cube-front">
+          <span class="cube-icon">📊</span>
+          <span class="cube-name">Data</span>
+          <span class="cube-pct">80%</span>
+        </div>
+        <div class="cube-face cube-back">
+          <span class="cube-detail-title">Data Analysis</span>
+          <span class="cube-detail-text">Pandas, NumPy, SQL, Matplotlib, Seaborn. My strongest area.</span>
+          <span class="cube-detail-pct">80%</span>
+        </div>
+        <div class="cube-face cube-top"></div>
+        <div class="cube-face cube-bottom"></div>
+        <div class="cube-face cube-left"></div>
+        <div class="cube-face cube-right"></div>
+      </div>
     </div>
-    <div class="skill-bar-row" data-pct="75">
-      <span class="skill-bar-name">Deep Learning (TensorFlow / PyTorch)</span>
-      <div class="skill-bar-track"><div class="skill-bar-fill"></div></div>
-      <span class="skill-bar-pct">75%</span>
+
+    <div class="cube-wrap">
+      <div class="cube" data-pct="60" tabindex="0" role="button" aria-label="Deep Learning skill — click to flip">
+        <div class="cube-face cube-front">
+          <span class="cube-icon">🧠</span>
+          <span class="cube-name">DL</span>
+          <span class="cube-pct">60%</span>
+        </div>
+        <div class="cube-face cube-back">
+          <span class="cube-detail-title">Deep Learning</span>
+          <span class="cube-detail-text">TensorFlow, PyTorch, CNNs, RNNs. Actively learning &amp; building.</span>
+          <span class="cube-detail-pct">60%</span>
+        </div>
+        <div class="cube-face cube-top"></div>
+        <div class="cube-face cube-bottom"></div>
+        <div class="cube-face cube-left"></div>
+        <div class="cube-face cube-right"></div>
+      </div>
     </div>
-    <div class="skill-bar-row" data-pct="70">
-      <span class="skill-bar-name">JavaScript &amp; Frontend</span>
-      <div class="skill-bar-track"><div class="skill-bar-fill"></div></div>
-      <span class="skill-bar-pct">70%</span>
+
+    <div class="cube-wrap">
+      <div class="cube" data-pct="55" tabindex="0" role="button" aria-label="JavaScript and Frontend skill — click to flip">
+        <div class="cube-face cube-front">
+          <span class="cube-icon">⚡</span>
+          <span class="cube-name">JS</span>
+          <span class="cube-pct">55%</span>
+        </div>
+        <div class="cube-face cube-back">
+          <span class="cube-detail-title">JavaScript &amp; Frontend</span>
+          <span class="cube-detail-text">Vanilla JS, HTML/CSS, responsive UI. Growing every day.</span>
+          <span class="cube-detail-pct">55%</span>
+        </div>
+        <div class="cube-face cube-top"></div>
+        <div class="cube-face cube-bottom"></div>
+        <div class="cube-face cube-left"></div>
+        <div class="cube-face cube-right"></div>
+      </div>
     </div>
   </div>
+
+  <p class="cubes-hint reveal">Hover to glow · click any cube to flip &amp; see details</p>
 </section>
 
 <!-- ===================================================
@@ -497,6 +582,6 @@
 <script src="{% static 'js/learning.js' %}" defer></script>
 <script src="{% static 'js/quote.js' %}" defer></script>
 <script src="{% static 'js/gh-stats.js' %}" defer></script>
-<script src="{% static 'js/skill-bars.js' %}" defer></script>
+<script src="{% static 'js/cubes.js' %}" defer></script>
 <script src="{% static 'js/local-time.js' %}" defer></script>
 {% endblock %}

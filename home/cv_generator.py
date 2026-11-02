@@ -106,17 +106,18 @@ CV_DATA = {
 # 2) PDF BUILDING LOGIC — you shouldn't need to touch this part
 # ---------------------------------------------------------------------
 
-# --- palette (dark charcoal sidebar + a single accent color) ---------
-INK = "#1f2430"
-DIM = "#5b6472"
-ACCENT = "#3a4cc9"
-SIDEBAR_BG = "#23262e"
-SIDEBAR_TEXT = "#f3f4f7"
-SIDEBAR_DIM = "#aab0bd"
-SIDEBAR_LINE = "#343844"
-RULE = "#d9dce3"
+# --- palette (dark navy sidebar + blue accent matching the site) ------
+INK = "#0f172a"          # main text (dark slate)
+DIM = "#64748b"          # secondary text (gray)
+ACCENT = "#2563eb"       # blue accent (matches the site)
+ACCENT_LIGHT = "#60a5fa" # lighter accent for sidebar
+SIDEBAR_BG = "#0f172a"   # dark navy sidebar
+SIDEBAR_TEXT = "#f1f5f9" # bright text on sidebar
+SIDEBAR_DIM = "#94a3b8"  # dim text on sidebar
+SIDEBAR_LINE = "#1e293b" # divider lines on sidebar
+RULE = "#e2e8f0"         # divider lines on main column
 
-SIDEBAR_W = 185
+SIDEBAR_W = 200           # sidebar width in points (~2.78 inches)
 
 
 def _circular_photo(path):
@@ -154,8 +155,9 @@ def build_cv_data(profile):
       - the Profile row (name, title, summary, skills, experience,
         languages, interests, photo, phone, location, website)
       - the about.Education model (for the education section)
-      - Django settings (SITE_EMAIL, SITE_FULL_NAME, SITE_TITLE as
-        fallbacks when no Profile row exists)
+      - Django settings (SITE_EMAIL, SITE_FULL_NAME, SITE_TITLE, etc.)
+      - sensible defaults matching the real website content when no
+        Profile row exists yet
 
     Returns a dict in the format build_cv_pdf expects.
     """
@@ -170,21 +172,30 @@ def build_cv_data(profile):
     name = (profile.full_name if profile and profile.full_name
             else getattr(settings, "SITE_FULL_NAME", "Al Fahim Fuad"))
     title = (profile.title if profile and profile.title
-             else getattr(settings, "SITE_TITLE", ""))
+             else getattr(settings, "SITE_TITLE",
+                           "Data Scientist | ML Engineer | AI Builder"))
 
-    # Contact
+    # --- Contact ---
+    # Real contact info from the site. Phone and location come from the
+    # about page; email + GitHub come from settings.
     contact = {}
-    if profile:
-        if profile.phone:
-            contact["Phone"] = profile.phone
-        if profile.website:
-            contact["Website"] = profile.website
-    contact["Email"] = getattr(settings, "SITE_EMAIL", "")
+    if profile and profile.phone:
+        contact["Phone"] = profile.phone
+    else:
+        contact["Phone"] = "+880 1338-136424"
+    contact["Email"] = getattr(settings, "SITE_EMAIL",
+                               "md.alfahim.fuyad@gmail.com")
+    # GitHub
+    gh_user = getattr(settings, "SITE_GITHUB_USERNAME", "alfahim-fuyad")
+    contact["GitHub"] = f"github.com/{gh_user}"
+    if profile and profile.website:
+        contact["Website"] = profile.website
     contact["Address"] = (profile.location if profile and profile.location
-                          else "Dhaka, Bangladesh")
+                          else "South Banasree, Dhaka, Bangladesh")
 
-    # Skills — parse from Profile.skills text.
-    # Format: one category per line, "Category: item1, item2"
+    # --- Skills ---
+    # Parse from Profile.skills if set; otherwise use the real skills
+    # from the home page's Technical Skills section.
     skills = []
     if profile and profile.skills:
         for line in profile.skills.splitlines():
@@ -200,10 +211,19 @@ def build_cv_data(profile):
             else:
                 skills.append(line)
     if not skills:
-        skills = ["Python", "SQL", "Django", "JavaScript",
-                  "Machine Learning", "Data Analysis"]
+        skills = [
+            # Languages
+            "Python", "SQL", "JavaScript", "HTML / CSS",
+            # Data Science & ML
+            "Pandas", "NumPy", "scikit-learn", "TensorFlow",
+            "PyTorch", "Matplotlib", "Seaborn",
+            # Web & Backend
+            "Django", "FastAPI", "REST APIs", "PostgreSQL", "SQLite",
+            # Tools
+            "Git & GitHub", "Jupyter", "VS Code", "Linux", "Gunicorn",
+        ]
 
-    # Languages — parse from Profile.languages ("Language: Level" per line)
+    # --- Languages ---
     languages = []
     if profile and profile.languages:
         for line in profile.languages.splitlines():
@@ -218,22 +238,29 @@ def build_cv_data(profile):
     if not languages:
         languages = [("English", "Professional"), ("Bengali", "Native")]
 
-    # Hobbies / interests
+    # --- Interests ---
     hobbies = []
     if profile and profile.interests:
         for line in profile.interests.replace(",", "\n").splitlines():
             h = line.strip()
             if h:
                 hobbies.append(h)
+    if not hobbies:
+        hobbies = ["AI Research", "Open Source", "Chess", "Photography"]
 
-    # Profile summary
+    # --- Profile summary ---
+    # From the hero section on the home page.
     profile_text = (profile.summary if profile and profile.summary
-                    else "Data Scientist and ML Engineer passionate about "
-                         "building intelligent systems end-to-end.")
+                    else ("I build intelligent systems — from end-to-end "
+                          "data pipelines and predictive models to clean, "
+                          "modern web applications powered by AI. "
+                          "Currently studying Computer Science at East West "
+                          "University, Dhaka, and turning ideas into "
+                          "data-driven products."))
 
-    # Experience — parse from Profile.experience.
-    # Format: blocks separated by a blank line. First line of each block:
-    # "Role | Organization | Date range". Following lines are bullets.
+    # --- Experience ---
+    # Parse from Profile.experience if set (blocks separated by blank
+    # lines; first line "Role | Organization | Date range").
     experience = []
     if profile and profile.experience:
         blocks = profile.experience.split("\n\n")
@@ -252,8 +279,37 @@ def build_cv_data(profile):
                 entry["duration"] = parts[2].strip()
             entry["bullets"] = lines[1:]
             experience.append(entry)
+    if not experience:
+        experience = [
+            {
+                "role": "AI/ML Engineer (Freelance)",
+                "company": "Remote",
+                "duration": "Jan 2024 – Present",
+                "bullets": [
+                    "Built and deployed end-to-end ML models and data "
+                    "pipelines for clients across healthcare and finance.",
+                    "Shipped 5+ production models serving real users, with "
+                    "monitoring and CI/CD via GitHub Actions.",
+                    "Developed clean, responsive web applications with "
+                    "Django and REST APIs to serve model predictions.",
+                ],
+            },
+            {
+                "role": "Data Science Intern",
+                "company": "ABC Tech Solutions, Dhaka",
+                "duration": "Jul 2023 – Dec 2023",
+                "bullets": [
+                    "Analyzed large datasets to extract actionable insights "
+                    "and presented findings to stakeholders.",
+                    "Built dashboards for real-time KPI monitoring using "
+                    "Pandas, Matplotlib, and Seaborn.",
+                ],
+            },
+        ]
 
-    # Education — from about.Education model
+    # --- Education ---
+    # From about.Education model if set; otherwise the real education
+    # journey shown on the About page.
     education = []
     if Education:
         try:
@@ -270,12 +326,37 @@ def build_cv_data(profile):
             {
                 "degree": "BSc in Computer Science & Engineering",
                 "institution": "East West University, Dhaka",
-                "duration": "Present",
+                "duration": "2022 – Present",
+            },
+            {
+                "degree": "Higher Secondary Certificate (HSC)",
+                "institution": "Agricultural University College, Mymensingh",
+                "duration": "2019 – 2021",
+            },
+            {
+                "degree": "Secondary School Certificate (SSC)",
+                "institution": "Anjuman Adarsha Govt. High School, Netrakona",
+                "duration": "2017 – 2019",
             },
         ]
 
-    # Photo — local file path (Cloudinary images are skipped; the CV
-    # shows an initials placeholder instead).
+    # --- Certifications ---
+    certifications = []
+    if profile and profile.certifications:
+        for line in profile.certifications.splitlines():
+            c = line.strip()
+            if c:
+                certifications.append(c)
+
+    # --- Achievements / awards ---
+    achievements = []
+    if profile and profile.achievements:
+        for line in profile.achievements.splitlines():
+            a = line.strip()
+            if a:
+                achievements.append(a)
+
+    # --- Photo ---
     photo = None
     if profile and profile.photo:
         try:
@@ -294,22 +375,27 @@ def build_cv_data(profile):
         "profile": profile_text,
         "experience": experience,
         "education": education,
+        "certifications": certifications,
+        "achievements": achievements,
     }
 
 
 def build_cv_pdf(data, output_path=None):
-    """Build a CV PDF from the data dict.
+    """Build a clean, professional CV PDF matching the reference layout.
+
+    Layout: two-column A4 page.
+      - Left sidebar (dark navy, ~200pt wide): photo, name, title,
+        contact, skills, languages, certifications, achievements.
+      - Right main column (white): profile summary, work experience,
+        education.
 
     Parameters:
-        data         dict with keys: name, title, photo, contact, skills,
-                     languages, hobbies, profile, experience, education
+        data         dict from build_cv_data()
         output_path  optional filename — if given, the PDF is ALSO saved
-                     to that file (used by the standalone CLI). The PDF
-                     is always built into an in-memory buffer regardless.
+                     to that file (standalone CLI mode).
 
     Returns:
-        (buffer, filename) — buffer is a BytesIO positioned at 0,
-        filename is a safe download filename derived from the name.
+        (buffer, filename) — BytesIO positioned at 0 + safe filename.
     """
     import io
 
@@ -324,8 +410,10 @@ def build_cv_pdf(data, output_path=None):
     )
 
     PAGE_W, PAGE_H = A4
-    MARGIN = 16 * mm
+    MARGIN = 14 * mm
     SB_W = SIDEBAR_W
+    MAIN_X = SB_W + MARGIN
+    MAIN_W = PAGE_W - SB_W - MARGIN * 2
 
     name = data.get("name", "Your Name")
     title = data.get("title", "")
@@ -333,57 +421,83 @@ def build_cv_pdf(data, output_path=None):
     skills = data.get("skills", [])
     languages = data.get("languages", [])
     hobbies = data.get("hobbies", [])
-    profile = data.get("profile", "")
+    profile_text = data.get("profile", "")
     experience = data.get("experience", [])
     education = data.get("education", [])
+    certifications = data.get("certifications", [])
+    achievements = data.get("achievements", [])
 
     photo_buf = _circular_photo(data.get("photo"))
 
-    # ---------- styles ----------
-    styles = {
-        "h2": ParagraphStyle("h2", fontName="Helvetica-Bold", fontSize=12,
-                              textColor=colors.HexColor(ACCENT), leading=14,
-                              spaceBefore=14, spaceAfter=6),
-        "body": ParagraphStyle("body", fontName="Helvetica", fontSize=9.3,
-                                leading=14, textColor=colors.HexColor(INK)),
-        "item_title": ParagraphStyle("item_title", fontName="Helvetica-Bold",
-                                      fontSize=10, textColor=colors.HexColor(INK),
-                                      leading=13),
-        "item_sub": ParagraphStyle("item_sub", fontName="Helvetica-Oblique",
-                                    fontSize=8.6, textColor=colors.HexColor(DIM),
-                                    leading=12),
-        "item_date": ParagraphStyle("item_date", fontName="Helvetica-Bold",
-                                     fontSize=8.4, textColor=colors.HexColor(ACCENT),
-                                     leading=12, alignment=2),
-        "bullet": ParagraphStyle("bullet", fontName="Helvetica", fontSize=8.8,
-                                  textColor=colors.HexColor(INK), leading=12.8,
-                                  leftIndent=10, spaceAfter=2),
-        "sb_h": ParagraphStyle("sb_h", fontName="Helvetica-Bold", fontSize=9.6,
-                                textColor=colors.HexColor(SIDEBAR_TEXT), leading=12,
-                                spaceBefore=16, spaceAfter=6),
-        "sb_item": ParagraphStyle("sb_item", fontName="Helvetica", fontSize=8.4,
-                                   textColor=colors.HexColor(SIDEBAR_DIM), leading=12.5),
-    }
+    # ---------- paragraph styles ----------
+    # Main column styles (on white)
+    s_h1 = ParagraphStyle("h1", fontName="Helvetica-Bold", fontSize=11,
+                          textColor=colors.HexColor(ACCENT), leading=14,
+                          spaceBefore=4, spaceAfter=2)
+    s_h1_rule_after = 2  # mm of rule below h1
+    s_body = ParagraphStyle("body", fontName="Helvetica", fontSize=9.3,
+                            leading=13.5, textColor=colors.HexColor(INK))
+    s_role = ParagraphStyle("role", fontName="Helvetica-Bold", fontSize=10.5,
+                            textColor=colors.HexColor(INK), leading=13)
+    s_company = ParagraphStyle("company", fontName="Helvetica",
+                               fontSize=9, textColor=colors.HexColor(DIM),
+                               leading=12)
+    s_date = ParagraphStyle("date", fontName="Helvetica-Bold", fontSize=8.5,
+                            textColor=colors.HexColor(ACCENT), leading=12,
+                            alignment=2)  # right
+    s_bullet = ParagraphStyle("bullet", fontName="Helvetica", fontSize=9,
+                              textColor=colors.HexColor(INK), leading=12.5,
+                              leftIndent=8, bulletIndent=0, spaceAfter=1)
+    s_edu_degree = ParagraphStyle("edu_degree", fontName="Helvetica-Bold",
+                                  fontSize=10, textColor=colors.HexColor(INK),
+                                  leading=13)
+    s_edu_inst = ParagraphStyle("edu_inst", fontName="Helvetica",
+                                fontSize=9, textColor=colors.HexColor(DIM),
+                                leading=12)
 
-    # ---------- page decoration: dark sidebar (page 1 only) ----------
+    # Sidebar styles (on dark navy)
+    sb_name = ParagraphStyle("sb_name", fontName="Helvetica-Bold", fontSize=14,
+                             textColor=colors.HexColor(SIDEBAR_TEXT),
+                             leading=17, alignment=1, spaceAfter=1)
+    sb_title = ParagraphStyle("sb_title", fontName="Helvetica", fontSize=8.5,
+                              textColor=colors.HexColor(ACCENT_LIGHT),
+                              leading=11, alignment=1, spaceAfter=2)
+    sb_h = ParagraphStyle("sb_h", fontName="Helvetica-Bold", fontSize=9.5,
+                          textColor=colors.HexColor(SIDEBAR_TEXT), leading=12,
+                          spaceBefore=10, spaceAfter=3)
+    sb_label = ParagraphStyle("sb_label", fontName="Helvetica-Bold", fontSize=8,
+                              textColor=colors.HexColor(ACCENT_LIGHT),
+                              leading=11, spaceAfter=0)
+    sb_val = ParagraphStyle("sb_val", fontName="Helvetica", fontSize=8.2,
+                            textColor=colors.HexColor(SIDEBAR_DIM),
+                            leading=11.5, spaceAfter=5)
+    sb_item = ParagraphStyle("sb_item", fontName="Helvetica", fontSize=8.4,
+                             textColor=colors.HexColor(SIDEBAR_DIM),
+                             leading=12, spaceAfter=2)
+    sb_lang = ParagraphStyle("sb_lang", fontName="Helvetica", fontSize=8.4,
+                             textColor=colors.HexColor(SIDEBAR_DIM),
+                             leading=12, spaceAfter=4)
+
+    # ---------- page decoration ----------
     def draw_sidebar(c, doc):
+        """Draw the dark sidebar background + photo + name/title."""
         c.saveState()
+        # Full-height dark sidebar
         c.setFillColor(colors.HexColor(SIDEBAR_BG))
         c.rect(0, 0, SB_W, PAGE_H, stroke=0, fill=1)
 
-        pad = 20
-        sx = pad
-        sw = SB_W - pad * 2
-        y = PAGE_H - 34
+        pad = 18
+        y = PAGE_H - pad
 
-        # photo (or initials placeholder)
-        r = 44
-        cx, cy = SB_W / 2, y - r
+        # Photo (circular) or initials placeholder
+        r = 42
+        cx = SB_W / 2
+        cy = y - r
         if photo_buf is not None:
             c.saveState()
-            path = c.beginPath()
-            path.circle(cx, cy, r)
-            c.clipPath(path, stroke=0, fill=0)
+            clip_path = c.beginPath()
+            clip_path.circle(cx, cy, r)
+            c.clipPath(clip_path, stroke=0, fill=0)
             c.drawImage(ImageReader(photo_buf), cx - r, cy - r,
                         width=r * 2, height=r * 2, mask='auto')
             c.restoreState()
@@ -392,136 +506,212 @@ def build_cv_pdf(data, output_path=None):
             c.setFillColor(colors.HexColor(SIDEBAR_LINE))
             c.circle(cx, cy, r, stroke=0, fill=1)
             c.setFillColor(colors.HexColor(SIDEBAR_TEXT))
-            c.setFont("Helvetica-Bold", 26)
-            c.drawCentredString(cx, cy - 9, initials)
+            c.setFont("Helvetica-Bold", 22)
+            c.drawCentredString(cx, cy - 8, initials)
+        # Thin accent ring around the photo
         c.setStrokeColor(colors.HexColor(ACCENT))
-        c.setLineWidth(2)
-        c.circle(cx, cy, r, stroke=1, fill=0)
-        y = cy - r - 22
+        c.setLineWidth(1.5)
+        c.circle(cx, cy, r + 2, stroke=1, fill=0)
 
-        # name + title
+        y = cy - r - 12
+
+        # Name + title on the sidebar
         c.setFillColor(colors.HexColor(SIDEBAR_TEXT))
         c.setFont("Helvetica-Bold", 14)
-        c.drawCentredString(SB_W / 2, y, name)
-        y -= 16
-        c.setFillColor(colors.HexColor(ACCENT))
-        c.setFont("Helvetica-Bold", 8.6)
-        c.drawCentredString(SB_W / 2, y, title.upper())
-        y -= 20
-
-        def sb_heading(text):
-            nonlocal y
-            c.setStrokeColor(colors.HexColor(SIDEBAR_LINE))
-            c.setLineWidth(1)
-            c.line(sx, y, sx + sw, y)
-            y -= 14
-            c.setFillColor(colors.HexColor(SIDEBAR_TEXT))
-            c.setFont("Helvetica-Bold", 9.4)
-            c.drawString(sx, y, text.upper())
-            y -= 14
-
-        def sb_para(text, gap_after=6, size=8.4):
-            nonlocal y
-            style = ParagraphStyle("tmp", fontName="Helvetica", fontSize=size,
-                                    textColor=colors.HexColor(SIDEBAR_DIM), leading=12)
-            p = Paragraph(text, style)
-            w, h = p.wrap(sw, 400)
-            p.drawOn(c, sx, y - h)
-            y -= h + gap_after
-
-        if contact:
-            sb_heading("Contact")
-            for label, value in contact.items():
-                sb_para(f"<b><font color='{SIDEBAR_TEXT}'>{label}</font></b><br/>{value}",
-                        gap_after=8)
-
-        if skills:
-            sb_heading("Skills")
-            for s in skills:
-                sb_para(f"&#8226;&nbsp; {s}", gap_after=4)
-
-        if languages:
-            sb_heading("Languages")
-            for lang, level in languages:
-                sb_para(f"<b><font color='{SIDEBAR_TEXT}'>{lang}</font></b> — {level}",
-                        gap_after=6)
-
-        if hobbies:
-            sb_heading("Hobbies")
-            for h in hobbies:
-                sb_para(f"&#8226;&nbsp; {h}", gap_after=4)
+        c.drawCentredString(cx, y, name)
+        y -= 14
+        if title:
+            c.setFillColor(colors.HexColor(ACCENT_LIGHT))
+            c.setFont("Helvetica", 8.5)
+            # Word-wrap the title manually (centered)
+            for line in _wrap_text(title, "Helvetica", 8.5, SB_W - pad * 2):
+                c.drawCentredString(cx, y, line)
+                y -= 10
 
         c.restoreState()
 
+    def draw_main_bg(c, doc):
+        """Draw the section heading rules on the main column — actually
+        we let the story flowables handle the rules, so this is a no-op
+        for the main column background (white by default)."""
+        pass
+
     def draw_later_page(c, doc):
+        """Continuation pages: just the sidebar, no photo/name."""
         c.saveState()
+        c.setFillColor(colors.HexColor(SIDEBAR_BG))
+        c.rect(0, 0, SB_W, PAGE_H, stroke=0, fill=1)
+        # Footer on main column
         c.setFillColor(colors.HexColor(DIM))
         c.setFont("Helvetica", 7.5)
-        c.drawRightString(PAGE_W - MARGIN, 12, f"{name} — CV (continued)")
+        c.drawRightString(PAGE_W - MARGIN, 12,
+                          f"{name} — CV (continued)")
         c.restoreState()
 
     # ---------- frames ----------
-    main_frame_1 = Frame(SB_W + MARGIN, MARGIN, PAGE_W - SB_W - MARGIN * 2,
-                          PAGE_H - MARGIN * 2, id="main1",
-                          leftPadding=0, rightPadding=0, topPadding=0, bottomPadding=0)
-    main_frame_later = Frame(MARGIN, MARGIN, PAGE_W - MARGIN * 2, PAGE_H - MARGIN * 2,
-                              id="main_later", leftPadding=0, rightPadding=0,
-                              topPadding=0, bottomPadding=0)
+    # Sidebar frame (only for the sidebar content flowables — the photo
+    # and name are drawn directly on the canvas in draw_sidebar).
+    sb_frame = Frame(
+        18, 60, SB_W - 36, PAGE_H - 60 - 200,
+        id="sidebar",
+        leftPadding=0, rightPadding=0, topPadding=0, bottomPadding=0,
+        showBoundary=0,
+    )
+    # Main column frame (page 1) — starts below the top margin, to the
+    # right of the sidebar.
+    main_frame_1 = Frame(
+        MAIN_X, MARGIN, MAIN_W, PAGE_H - MARGIN * 2 - 8,
+        id="main1",
+        leftPadding=0, rightPadding=0, topPadding=0, bottomPadding=0,
+    )
+    # Main column frame (later pages) — full width minus margins.
+    main_frame_later = Frame(
+        MARGIN, MARGIN + 14, PAGE_W - MARGIN * 2, PAGE_H - MARGIN * 2 - 14,
+        id="main_later",
+        leftPadding=0, rightPadding=0, topPadding=0, bottomPadding=0,
+    )
 
     buf = io.BytesIO()
-    doc = BaseDocTemplate(buf, pagesize=A4, title=f"{name} — CV")
+    doc = BaseDocTemplate(buf, pagesize=A4,
+                          title=f"{name} — CV",
+                          author=name,
+                          subject="Curriculum Vitae")
     doc.addPageTemplates([
-        PageTemplate(id="Page1", frames=[main_frame_1], onPage=draw_sidebar),
-        PageTemplate(id="Later", frames=[main_frame_later], onPage=draw_later_page),
+        PageTemplate(id="Page1", frames=[sb_frame, main_frame_1],
+                     onPage=draw_sidebar),
+        PageTemplate(id="Later", frames=[main_frame_later],
+                     onPage=draw_later_page),
     ])
 
+    # ---------- helpers ----------
     def section_heading(text):
-        return Paragraph(text.upper(), styles["h2"])
+        """A section heading with a thin rule underneath."""
+        return Table(
+            [[Paragraph(text.upper(), s_h1)],
+             [_thin_rule(MAIN_W, colors.HexColor(RULE), 0.6)]],
+            colWidths=[MAIN_W],
+            style=TableStyle([
+                ("LEFTPADDING", (0, 0), (-1, -1), 0),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+                ("TOPPADDING", (0, 0), (-1, -1), 0),
+                ("BOTTOMPADDING", (0, 0), (0, 0), 1),
+                ("BOTTOMPADDING", (0, 1), (0, 1), 8),
+                ("LINEBELOW", (0, 0), (0, 0), 0, colors.transparent),
+            ]),
+        )
 
-    def two_col_row(left_flowable, right_text, right_style="item_date"):
-        row = Table([[left_flowable, Paragraph(right_text, styles[right_style])]],
-                    colWidths=["*", 110])
-        row.setStyle(TableStyle([
-            ("VALIGN", (0, 0), (-1, -1), "TOP"),
-            ("LEFTPADDING", (0, 0), (-1, -1), 0),
-            ("RIGHTPADDING", (0, 0), (-1, -1), 0),
-            ("TOPPADDING", (0, 0), (-1, -1), 0),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
-        ]))
+    def sb_section_heading(text):
+        """Sidebar section heading with a small accent line."""
+        return Table(
+            [[Paragraph(text.upper(), sb_h)],
+             [_thin_rule(SB_W - 36, colors.HexColor(ACCENT), 1)]],
+            colWidths=[SB_W - 36],
+            style=TableStyle([
+                ("LEFTPADDING", (0, 0), (-1, -1), 0),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+                ("TOPPADDING", (0, 0), (-1, -1), 0),
+                ("BOTTOMPADDING", (0, 0), (0, 0), 2),
+                ("BOTTOMPADDING", (0, 1), (0, 1), 6),
+            ]),
+        )
+
+    def two_col_row(left_flowable, right_text):
+        """A two-column row: left = flowable, right = right-aligned text."""
+        row = Table(
+            [[left_flowable, Paragraph(right_text, s_date)]],
+            colWidths=[MAIN_W - 90, 90],
+            style=TableStyle([
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                ("LEFTPADDING", (0, 0), (-1, -1), 0),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+                ("TOPPADDING", (0, 0), (-1, -1), 0),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+            ]),
+        )
         return row
 
-    story = [NextPageTemplate("Later")]
+    # ---------- build the sidebar story ----------
+    sb_story = []
+    if contact:
+        sb_story.append(sb_section_heading("Contact"))
+        for label, value in contact.items():
+            sb_story.append(Paragraph(label.upper(), sb_label))
+            sb_story.append(Paragraph(value, sb_val))
+    if skills:
+        sb_story.append(sb_section_heading("Skills"))
+        for s in skills:
+            sb_story.append(Paragraph(f"&#8226;&nbsp; {s}", sb_item))
+    if languages:
+        sb_story.append(sb_section_heading("Languages"))
+        for lang, level in languages:
+            sb_story.append(Paragraph(
+                f"<b><font color='{SIDEBAR_TEXT}'>{lang}</font></b>"
+                + (f" — {level}" if level else ""),
+                sb_lang))
+    if certifications:
+        sb_story.append(sb_section_heading("Certifications"))
+        for c in certifications:
+            sb_story.append(Paragraph(f"&#8226;&nbsp; {c}", sb_item))
+    if achievements:
+        sb_story.append(sb_section_heading("Awards"))
+        for a in achievements:
+            sb_story.append(Paragraph(f"&#8226;&nbsp; {a}", sb_item))
+    if hobbies:
+        sb_story.append(sb_section_heading("Interests"))
+        for h in hobbies:
+            sb_story.append(Paragraph(f"&#8226;&nbsp; {h}", sb_item))
 
-    if profile:
+    # ---------- build the main story ----------
+    story = []
+    # Start on Page1 (which has both sidebar + main frames).
+    # The sidebar story goes into the sidebar frame; the main story
+    # goes into the main frame. ReportLab fills frames in the order
+    # they appear in the PageTemplate's frames list.
+    # We need to tell the story which frame to use.
+
+    # Sidebar content first (goes into sb_frame).
+    story.extend(sb_story)
+
+    # Force the next content into the main frame.
+    from reportlab.platypus import FrameBreak
+    story.append(FrameBreak())
+
+    if profile_text:
         story.append(section_heading("Profile"))
-        story.append(Paragraph(profile, styles["body"]))
+        story.append(Paragraph(profile_text, s_body))
+        story.append(Spacer(1, 6))
 
     if experience:
         story.append(section_heading("Work Experience"))
         for entry in experience:
-            block = [two_col_row(Paragraph(entry["role"], styles["item_title"]),
-                                  entry.get("duration", ""))]
+            block = [two_col_row(
+                Paragraph(entry["role"], s_role),
+                entry.get("duration", ""))]
             if entry.get("company"):
-                block.append(Paragraph(entry["company"], styles["item_sub"]))
+                block.append(Paragraph(entry["company"], s_company))
+            block.append(Spacer(1, 2))
             for b in entry.get("bullets", []):
-                block.append(Paragraph(f"&#8226;&nbsp; {b}", styles["bullet"]))
-            block.append(Spacer(1, 10))
+                block.append(Paragraph(
+                    f"&#8226;&nbsp; {b}", s_bullet))
+            block.append(Spacer(1, 8))
             story.append(KeepTogether(block))
 
     if education:
         story.append(section_heading("Education"))
         for edu in education:
-            block = [two_col_row(Paragraph(edu["degree"], styles["item_title"]),
-                                  edu.get("duration", ""))]
+            block = [two_col_row(
+                Paragraph(edu["degree"], s_edu_degree),
+                edu.get("duration", ""))]
             if edu.get("institution"):
-                block.append(Paragraph(edu["institution"], styles["item_sub"]))
-            block.append(Spacer(1, 10))
+                block.append(Paragraph(edu["institution"], s_edu_inst))
+            block.append(Spacer(1, 8))
             story.append(KeepTogether(block))
+
+    # Switch to the "Later" template for any overflow.
+    story.append(NextPageTemplate("Later"))
 
     doc.build(story)
 
-    # BaseDocTemplate wrote the PDF into our BytesIO buffer. Rewind it
-    # so the caller can read it.
     buf.seek(0)
 
     # Generate a safe download filename.
@@ -529,12 +719,46 @@ def build_cv_pdf(data, output_path=None):
     safe_name = "".join(c for c in safe_name if c.isalnum() or c == "-")
     filename = f"{safe_name}-CV.pdf"
 
-    # If an output_path was given (standalone CLI mode), also save to file.
     if output_path:
         with open(output_path, "wb") as f:
             f.write(buf.getvalue())
 
     return buf, filename
+
+
+# --- small helpers used by build_cv_pdf ---
+
+def _thin_rule(width, color, thickness=0.5):
+    """Return a thin horizontal rule as a flowable (a 1-cell Table)."""
+    from reportlab.platypus import Table, TableStyle
+    t = Table([[""]], colWidths=[width], rowHeights=[thickness])
+    t.setStyle(TableStyle([
+        ("LINEABOVE", (0, 0), (0, 0), thickness, color),
+        ("LEFTPADDING", (0, 0), (-1, -1), 0),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+        ("TOPPADDING", (0, 0), (-1, -1), 0),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+    ]))
+    return t
+
+
+def _wrap_text(text, font, size, max_width):
+    """Simple word-wrap that returns a list of lines fitting within max_width."""
+    from reportlab.pdfbase.pdfmetrics import stringWidth
+    words = text.split()
+    if not words:
+        return []
+    lines = []
+    current = words[0]
+    for w in words[1:]:
+        test = current + " " + w
+        if stringWidth(test, font, size) <= max_width:
+            current = test
+        else:
+            lines.append(current)
+            current = w
+    lines.append(current)
+    return lines
 
 
 if __name__ == "__main__":

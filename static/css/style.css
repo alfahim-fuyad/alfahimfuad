@@ -3226,63 +3226,210 @@ html[data-theme="dark"] .modal-x .close-x {
 }
 
 
-/* Skill proficiency bars */
-.skills-bars {
-    max-width: 680px;
+/* ================================================================
+   3D SKILL CUBES — floating, rotating, glowing, click-to-flip
+   ================================================================ */
+.cubes-stage {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 40px 28px;
+    max-width: 720px;
     margin: 0 auto;
+    perspective: 900px;
+}
+
+.cube-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 140px;
+}
+
+.cube {
+    width: 120px;
+    height: 120px;
+    position: relative;
+    transform-style: preserve-3d;
+    cursor: pointer;
+    /* Continuous slow rotation — paused on hover or when flipped. */
+    animation: cube-spin 14s linear infinite;
+    transition: transform .5s cubic-bezier(.22, 1, .36, 1);
+}
+.cube:hover {
+    animation-play-state: paused;
+}
+.cube.flipped {
+    animation-play-state: paused;
+    transform: rotateY(180deg) !important;
+}
+
+@keyframes cube-spin {
+    from { transform: rotateX(-18deg) rotateY(0deg); }
+    to   { transform: rotateX(-18deg) rotateY(360deg); }
+}
+
+/* Each face of the cube */
+.cube-face {
+    position: absolute;
+    width: 120px;
+    height: 120px;
     display: flex;
     flex-direction: column;
-    gap: 18px;
-}
-.skill-bar-row {
-    display: grid;
-    grid-template-columns: 1fr 2fr auto;
     align-items: center;
-    gap: 14px;
-}
-.skill-bar-name {
-    font-family: var(--font-head);
-    font-size: .88rem;
-    font-weight: 600;
-    color: var(--text);
-    white-space: nowrap;
-}
-.skill-bar-track {
-    height: 10px;
-    background: rgba(96, 165, 250, 0.12);
-    border-radius: 999px;
+    justify-content: center;
+    gap: 4px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 14px;
+    border: 1px solid rgba(96, 165, 250, 0.28);
     overflow: hidden;
-    border: 1px solid var(--border);
 }
-.skill-bar-fill {
-    height: 100%;
-    width: 0;
-    background: linear-gradient(90deg, #60a5fa 0%, #818cf8 50%, #c084fc 100%);
-    border-radius: 999px;
-    transition: width 1.2s cubic-bezier(.22, 1, .36, 1);
-    box-shadow: 0 0 12px rgba(96, 165, 250, 0.4);
+
+/* Front face — skill name + percentage */
+.cube-front {
+    background: linear-gradient(145deg, rgba(37, 99, 235, 0.12), rgba(168, 85, 247, 0.08));
+    transform: translateZ(60px);
 }
-.skill-bar-pct {
+[data-theme="dark"] .cube-front {
+    background: linear-gradient(145deg, rgba(96, 165, 250, 0.18), rgba(168, 85, 247, 0.10));
+}
+
+/* Back face — skill details (visible when flipped) */
+.cube-back {
+    background: linear-gradient(145deg, rgba(37, 99, 235, 0.22), rgba(168, 85, 247, 0.16));
+    transform: rotateY(180deg) translateZ(60px);
+    padding: 10px;
+    text-align: center;
+}
+[data-theme="dark"] .cube-back {
+    background: linear-gradient(145deg, rgba(96, 165, 250, 0.28), rgba(168, 85, 247, 0.18));
+}
+
+/* Top + bottom faces — gradient accent */
+.cube-top {
+    background: linear-gradient(180deg, rgba(96, 165, 250, 0.3), rgba(96, 165, 250, 0.1));
+    transform: rotateX(90deg) translateZ(60px);
+}
+.cube-bottom {
+    background: linear-gradient(180deg, rgba(168, 85, 247, 0.1), rgba(168, 85, 247, 0.3));
+    transform: rotateX(-90deg) translateZ(60px);
+}
+
+/* Left + right faces — darker accent */
+.cube-left {
+    background: linear-gradient(90deg, rgba(37, 99, 235, 0.25), rgba(37, 99, 235, 0.05));
+    transform: rotateY(-90deg) translateZ(60px);
+}
+.cube-right {
+    background: linear-gradient(90deg, rgba(37, 99, 235, 0.05), rgba(37, 99, 235, 0.25));
+    transform: rotateY(90deg) translateZ(60px);
+}
+
+/* Front face content */
+.cube-icon {
+    font-size: 1.8rem;
+    line-height: 1;
+    margin-bottom: 2px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+.cube-name {
     font-family: var(--font-head);
     font-size: .82rem;
-    font-weight: 700;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: .3px;
+    line-height: 1.1;
+}
+.cube-pct {
+    font-family: var(--font-head);
+    font-size: 1.05rem;
+    font-weight: 800;
     color: var(--cyan);
-    min-width: 36px;
-    text-align: right;
+    line-height: 1;
     font-variant-numeric: tabular-nums;
 }
 
+/* Back face content */
+.cube-detail-title {
+    font-family: var(--font-head);
+    font-size: .78rem;
+    font-weight: 800;
+    color: var(--cyan);
+    margin-bottom: 4px;
+    line-height: 1.2;
+}
+.cube-detail-text {
+    font-family: var(--font-body);
+    font-size: .68rem;
+    line-height: 1.35;
+    color: var(--text);
+}
+.cube-detail-pct {
+    margin-top: 4px;
+    font-family: var(--font-head);
+    font-size: .9rem;
+    font-weight: 800;
+    color: var(--cyan);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Hover glow — a soft accent shadow around the cube */
+.cube:hover .cube-face {
+    box-shadow:
+        inset 0 0 20px rgba(96, 165, 250, 0.15),
+        0 0 24px rgba(96, 165, 250, 0.35);
+    border-color: rgba(96, 165, 250, 0.5);
+}
+.cube:hover .cube-front,
+.cube:hover .cube-back {
+    background: linear-gradient(145deg, rgba(96, 165, 250, 0.25), rgba(168, 85, 247, 0.18));
+}
+
+/* Hint text */
+.cubes-hint {
+    text-align: center;
+    font-size: .78rem;
+    color: var(--text-dim);
+    margin-top: 28px;
+    font-style: italic;
+}
+
+/* Mobile — smaller cubes, tighter grid */
 @media (max-width: 600px) {
-    .skill-bar-row {
-        grid-template-columns: 1fr auto;
-        grid-template-areas:
-            "name pct"
-            "track track";
-        gap: 6px 12px;
+    .cubes-stage {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 28px 14px;
+        max-width: 100%;
     }
-    .skill-bar-name { grid-area: name; }
-    .skill-bar-pct  { grid-area: pct; }
-    .skill-bar-track { grid-area: track; width: 100%; }
+    .cube-wrap { height: 110px; }
+    .cube, .cube-face { width: 96px; height: 96px; }
+    .cube-front { transform: translateZ(48px); }
+    .cube-back { transform: rotateY(180deg) translateZ(48px); }
+    .cube-top { transform: rotateX(90deg) translateZ(48px); }
+    .cube-bottom { transform: rotateX(-90deg) translateZ(48px); }
+    .cube-left { transform: rotateY(-90deg) translateZ(48px); }
+    .cube-right { transform: rotateY(90deg) translateZ(48px); }
+    .cube-icon { font-size: 1.4rem; }
+    .cube-name { font-size: .72rem; }
+    .cube-pct { font-size: .88rem; }
+    .cube-detail-title { font-size: .68rem; }
+    .cube-detail-text { font-size: .58rem; }
+    .cube-detail-pct { font-size: .76rem; }
+}
+
+@media (max-width: 400px) {
+    .cubes-stage { gap: 22px 10px; }
+    .cubes-hint { font-size: .72rem; }
+}
+
+/* Reduced motion — disable rotation, keep the flip */
+@media (prefers-reduced-motion: reduce) {
+    .cube { animation: none; transform: rotateX(-18deg); }
+    .cube.flipped { transform: rotateY(180deg) !important; }
+}
+
+/* Keep gh-stats mobile rules that were bundled with the old skill bars */
+@media (max-width: 600px) {
     .gh-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
     .gh-stat-card { padding: 18px 10px 14px; }
     .gh-stat-icon { width: 40px; height: 40px; }
