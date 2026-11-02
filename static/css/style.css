@@ -696,7 +696,9 @@ a:hover { color: var(--magenta); }
 }
 
 @media (max-width: 600px) {
-    .container-x { padding: 0 18px; }
+    /* Premium horizontal breathing room — cards no longer touch the
+       screen edges. 24px each side gives a clear gutter on phones. */
+    .container-x { padding: 0 24px; }
     .cv-hero { padding-top: 28px; }
     .cv-hero-grid { gap: 22px; }
 
@@ -724,7 +726,7 @@ a:hover { color: var(--magenta); }
 
     .stats-grid {
         grid-template-columns: 1fr 1fr;
-        gap: 10px;
+        gap: 12px;
         margin-top: 28px;
     }
     .stat-card { padding: 16px 10px; }
@@ -743,13 +745,33 @@ a:hover { color: var(--magenta); }
     .contact-wrap { grid-template-columns: 1fr; }
 
     .btn { font-size: .9rem; padding: 12px 20px; }
+
+    /* Premium card spacing on mobile — extra gap between cards
+       vertically so they feel like floating tiles, not a wall. */
+    .project-grid,
+    .others-grid,
+    .pro-cert-grid,
+    .pro-achievement-list,
+    .edu-grid,
+    .about-grid,
+    .skills-grid,
+    .services-grid { gap: 18px; }
 }
 
 @media (max-width: 400px) {
+    /* Keep a minimum 20px gutter even on the smallest phones (iPhone SE
+       at 375px → 335px content width) so cards never touch the edges. */
+    .container-x { padding: 0 20px; }
     .nav-inner { padding: 0 14px; }
     .cv-name { font-size: 1.85rem; }
     .profile-card { max-width: 200px; }
     .avatar-wrap { width: 120px; height: 120px; }
+    .project-grid,
+    .others-grid,
+    .pro-cert-grid,
+    .pro-achievement-list,
+    .edu-grid,
+    .about-grid { gap: 16px; }
 }
 
 /* ================================================================
@@ -2240,5 +2262,304 @@ html[data-theme="dark"] .modal-x .close-x {
     font-weight: 400;
     margin-left: 2px;
 }
+
+
+/* ================================================================
+   FEATURE APPEND (round 3) — home page interactive sections
+     1) Interactive Terminal
+     2) Snake mini-game
+     3) "Currently Learning" rotating cards
+   All three are fully responsive (desktop + mobile) and inherit
+   dark-theme variables automatically.
+   ================================================================ */
+
+/* ----------------------------------------------------------------
+   1) INTERACTIVE TERMINAL
+   ---------------------------------------------------------------- */
+.terminal-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow-glow);
+    border: 1px solid var(--border-strong);
+    background: #0b1220;
+}
+
+.terminal-chrome {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    border-bottom: 1px solid rgba(96, 165, 250, 0.18);
+}
+.term-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.term-dot.red    { background: #ef4444; }
+.term-dot.yellow { background: #f59e0b; }
+.term-dot.green  { background: #22c55e; }
+.term-title {
+    margin-left: 10px;
+    font-family: 'Space Grotesk', 'Sora', monospace;
+    font-size: .76rem;
+    color: #94a3b8;
+    letter-spacing: .3px;
+}
+
+.terminal-body {
+    font-family: 'SF Mono', 'JetBrains Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+    font-size: .86rem;
+    line-height: 1.6;
+    color: #e8eefc;
+    padding: 16px 18px;
+    height: 320px;
+    overflow-y: auto;
+    background: #0b1220;
+    cursor: text;
+}
+.terminal-body::-webkit-scrollbar { width: 8px; }
+.terminal-body::-webkit-scrollbar-track { background: transparent; }
+.terminal-body::-webkit-scrollbar-thumb {
+    background: rgba(96, 165, 250, 0.25);
+    border-radius: 4px;
+}
+
+.term-line {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    margin-bottom: 2px;
+}
+.term-line.term-ok    { color: #4ade80; }
+.term-line.term-err   { color: #f87171; }
+.term-line.term-dim   { color: #64748b; }
+.term-line.term-cmd   { color: #94a3b8; }
+.term-line strong     { color: #fde047; font-weight: 600; }
+.term-line code       {
+    background: rgba(96, 165, 250, 0.14);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: #93c5fd;
+    font-size: .82em;
+}
+
+.term-link {
+    color: #60a5fa;
+    text-decoration: underline;
+    text-decoration-color: rgba(96, 165, 250, 0.4);
+    text-underline-offset: 2px;
+}
+.term-link:hover { color: #93c5fd; text-decoration-color: #93c5fd; }
+
+.term-prompt-inline { color: #22c55e; font-weight: 600; }
+
+.term-input-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+}
+.term-prompt {
+    color: #22c55e;
+    font-weight: 600;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+.term-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #e8eefc;
+    font-family: inherit;
+    font-size: inherit;
+    caret-color: #22c55e;
+    padding: 0;
+}
+.term-input::placeholder { color: #475569; }
+
+/* Terminal stays dark in BOTH themes — it's a terminal. */
+[data-theme="light"] .terminal-wrap,
+[data-theme="dark"] .terminal-wrap {
+    background: #0b1220;
+}
+
+/* Mobile: shrink the terminal height a bit so it fits on small screens. */
+@media (max-width: 600px) {
+    .terminal-body { height: 260px; font-size: .82rem; padding: 14px; }
+    .term-title { display: none; }
+}
+@media (max-width: 400px) {
+    .terminal-body { height: 220px; font-size: .78rem; padding: 12px; }
+}
+
+
+/* ----------------------------------------------------------------
+   2) SNAKE MINI-GAME
+   ---------------------------------------------------------------- */
+.game-wrap {
+    max-width: 360px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.game-stats {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    backdrop-filter: blur(16px);
+}
+.game-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.1;
+}
+.game-stat-lbl {
+    font-size: .68rem;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    color: var(--text-dim);
+    font-weight: 700;
+}
+.game-stat-val {
+    font-family: var(--font-head);
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--cyan);
+}
+.game-controls {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+}
+
+.game-board-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    max-width: 300px;
+    margin: 0 auto;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--border-strong);
+    box-shadow: var(--shadow-glow);
+}
+#snakeCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    image-rendering: pixelated;
+    /* On high-DPI mobile, the canvas scales up smoothly. */
+    image-rendering: crisp-edges;
+    touch-action: none;
+}
+
+.game-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(11, 18, 32, 0.86);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #e8eefc;
+    transition: opacity .25s;
+}
+.game-overlay-inner { padding: 18px; }
+.game-overlay h4 {
+    font-family: var(--font-head);
+    font-size: 1.2rem;
+    font-weight: 800;
+    margin: 0 0 8px;
+    color: #fff;
+}
+.game-overlay p {
+    font-size: .85rem;
+    color: #cbd5e1;
+    margin: 0 0 14px;
+    line-height: 1.5;
+}
+.game-overlay kbd {
+    display: inline-block;
+    padding: 1px 6px;
+    background: rgba(96, 165, 250, 0.2);
+    border: 1px solid rgba(96, 165, 250, 0.4);
+    border-radius: 4px;
+    font-size: .78em;
+    color: #93c5fd;
+    font-family: monospace;
+}
+
+.game-hint {
+    text-align: center;
+    font-size: .76rem;
+    color: var(--text-dim);
+    margin: 0;
+}
+
+@media (max-width: 600px) {
+    .game-stats { padding: 10px 12px; gap: 12px; }
+    .game-stat-val { font-size: 1.1rem; }
+    .game-controls { gap: 6px; }
+}
+
+
+/* ----------------------------------------------------------------
+   3) CURRENTLY LEARNING
+   ---------------------------------------------------------------- */
+.learning-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+}
+.learning-card {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 20px 22px;
+    transition: opacity .25s, transform .25s, border-color .25s;
+}
+.learning-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-strong);
+}
+.learning-icon {
+    width: 44px; height: 44px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: var(--accent-grad);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-size: 1.4rem;
+    box-shadow: 0 6px 16px rgba(96, 165, 250, 0.25);
+}
+.learning-card h4 {
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -.2px;
+    margin: 0 0 6px;
+}
+.learning-card p {
+    color: var(--text-dim);
+    font-size: .88rem;
+    line-height: 1.55;
+    margin: 0;
+}
+
 
 

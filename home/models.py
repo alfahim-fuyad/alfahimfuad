@@ -6,7 +6,7 @@ class Profile(models.Model):
     # Extra CV-only content. Everything else the CV needs (GitHub repos,
     # education) is pulled live from the GitHub API / about.Education, so the
     # "Download CV" button always regenerates a fresh PDF from current data.
-    full_name = models.CharField(max_length=120, blank=True, default='Md. Al Fahim Fuyad')
+    full_name = models.CharField(max_length=120, blank=True, default='Al Fahim Fuad')
     title = models.CharField(max_length=160, blank=True, default='Data Scientist | ML Engineer | AI Builder')
     location = models.CharField(max_length=120, blank=True, default='Dhaka, Bangladesh')
     phone = models.CharField(max_length=40, blank=True, help_text="Optional. Leave blank to omit from the CV.")

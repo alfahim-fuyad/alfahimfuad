@@ -11,6 +11,8 @@ DEFAULT_EDUCATION = [
         'location': 'Netrakona, Bangladesh',
         'status': '',
         'website': '',
+        # Static fallback image (used when no admin-uploaded image is set).
+        'default_image': 'images/education/anjuman.png',
     },
     {
         'level': 'college',
@@ -20,6 +22,7 @@ DEFAULT_EDUCATION = [
         'location': 'Mymensingh, Bangladesh',
         'status': '',
         'website': 'https://www.aucm.edu.bd/',
+        'default_image': 'images/education/aucm.png',
     },
     {
         'level': 'university',
@@ -29,6 +32,7 @@ DEFAULT_EDUCATION = [
         'location': 'Dhaka, Bangladesh',
         'status': 'Currently Studying',
         'website': 'https://www.ewubd.edu/',
+        'default_image': 'images/education/ewu.png',
     },
 ]
 

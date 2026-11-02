@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}About — Md. Al Fahim Fuyad{% endblock %}
+{% block title %}About — Al Fahim Fuad{% endblock %}
 
 {% block content %}
 <section class="section container-x">
@@ -13,7 +13,7 @@
   <div class="about-grid">
     <div class="glass-card reveal">
       <div class="icon">MF</div>
-      <h3>Md. Al Fahim Fuyad</h3>
+      <h3>Al Fahim Fuad</h3>
       <h5>Computer Science &amp; Engineering</h5>
       <p>East West University, Dhaka — currently exploring the intersection of data,
         intelligence, and human-centered design.</p>
@@ -46,9 +46,11 @@
   <div class="edu-grid">
     {% for edu in educations %}
       <article class="edu-card glass-card reveal{% if edu.status %} current{% endif %}">
-        <div class="edu-thumb {% if not edu.image %}placeholder{% endif %}{% if edu.level != 'school' %} logo-fit{% endif %}">
+        <div class="edu-thumb {% if not edu.image and not edu.default_image %}placeholder{% endif %}">
           {% if edu.image %}
-            <img src="{{ edu.image.url }}" alt="{{ edu.institution }} logo">
+            <img src="{{ edu.image.url }}" alt="{{ edu.institution }}">
+          {% elif edu.default_image %}
+            <img src="{% static edu.default_image %}" alt="{{ edu.institution }}">
           {% endif %}
           <span class="edu-badge">{{ edu.level_label }}</span>
           {% if edu.status %}<span class="edu-current">Current</span>{% endif %}

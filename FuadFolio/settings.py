@@ -114,7 +114,7 @@ SITE_FACEBOOK_URL = os.environ.get(
 # SITE IDENTITY (extra) — used by the floating chatbot prompt
 # ============================================================
 
-SITE_FULL_NAME = os.environ.get("SITE_FULL_NAME", "Md. Al Fahim Fuyad")
+SITE_FULL_NAME = os.environ.get("SITE_FULL_NAME", "Al Fahim Fuad")
 
 SITE_TITLE = os.environ.get(
     "SITE_TITLE",

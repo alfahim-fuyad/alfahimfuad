@@ -1,6 +1,6 @@
 # fuadFolio
 
-Personal portfolio website for **Md. Al Fahim Fuyad** — Data Scientist, ML Engineer, and AI Builder. Built with Django and a hand-crafted, fully responsive design system.
+Personal portfolio website for **Al Fahim Fuad** — Data Scientist, ML Engineer, and AI Builder. Built with Django and a hand-crafted, fully responsive design system.
 
 Live sections: Home (hero, skills, services), About (bio + education journey), Projects (live GitHub repos), and Contact.
 
@@ -176,7 +176,7 @@ service's Environment tab instead.
 | `DEBUG` | `True` / `False`. Defaults to `False`. | Production |
 | `SITE_GITHUB_USERNAME` | GitHub username used for projects + avatar fallback. Default `alfahim-fuyad`. | No |
 | `SITE_EMAIL` / `SITE_LINKEDIN_URL` / `SITE_FACEBOOK_URL` | Contact info exposed to templates as `{{ site.* }}`. | No |
-| `SITE_FULL_NAME` / `SITE_TITLE` | Used by the chatbot's system prompt and the Others page header. Defaults to `Md. Al Fahim Fuyad` / `Data Scientist \| ML Engineer \| AI Builder`. | No |
+| `SITE_FULL_NAME` / `SITE_TITLE` | Used by the chatbot's system prompt and the Others page header. Defaults to `Al Fahim Fuad` / `Data Scientist \| ML Engineer \| AI Builder`. | No |
 | `GITHUB_TOKEN` | Optional GitHub PAT to lift the unauthenticated rate limit. | No |
 | `CLOUDINARY_URL` | Cloudinary connection string (`cloudinary://…`). When set, all image uploads go to Cloudinary. | No |
 | `CLOUDINARY_CLOUD_NAME` + `CLOUDINARY_API_KEY` + `CLOUDINARY_API_SECRET` | Alternative to `CLOUDINARY_URL` (set all three). | No |

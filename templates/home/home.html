@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Md. Al Fahim Fuyad — AI & Data Science Portfolio{% endblock %}
+{% block title %}Al Fahim Fuad — AI & Data Science Portfolio{% endblock %}
 
 {% block content %}
 
@@ -18,7 +18,7 @@
         <span>Available for Collaboration</span>
       </div>
 
-      <h1 class="cv-name">Md. Al Fahim <span class="grad">Fuyad</span></h1>
+      <h1 class="cv-name">Al Fahim <span class="grad">Fuad</span></h1>
 
       <p class="cv-title">
         Data Scientist &nbsp;&bull;&nbsp; ML Engineer &nbsp;&bull;&nbsp; AI Builder
@@ -69,14 +69,14 @@
         <div class="avatar-wrap" data-tilt-layer="avatar">
           <img
             src="{% if avatar_url %}{{ avatar_url }}{% else %}{% static 'images/fuad.png' %}{% endif %}"
-            alt="Md. Al Fahim Fuyad"
+            alt="Al Fahim Fuad"
             class="avatar-img"
             loading="eager"
             onerror="this.style.opacity='0'"
           >
         </div>
         <div class="profile-info" data-tilt-layer="content">
-          <p class="profile-name">MD. FUYAD</p>
+          <p class="profile-name">Fuad</p>
           <p class="profile-role">ML Enthusiast &amp; AI Explorer</p>
           <div class="profile-badges">
             <span>Python</span>
@@ -244,4 +244,115 @@
   </div>
 </section>
 
+<!-- ===================================================
+     INTERACTIVE TERMINAL
+     =================================================== -->
+<section class="section container-x">
+  <h2 class="section-title reveal">Terminal</h2>
+  <p class="section-sub reveal">
+    Type a command to learn about me. Try <code>help</code> to see all commands,
+    or <code>whoami</code>, <code>skills</code>, <code>projects</code>,
+    <code>contact</code>.
+  </p>
+
+  <div class="terminal-wrap reveal">
+    <div class="terminal-chrome">
+      <span class="term-dot red"></span>
+      <span class="term-dot yellow"></span>
+      <span class="term-dot green"></span>
+      <span class="term-title">fuad@portfolio: ~/about</span>
+    </div>
+    <div class="terminal-body" id="terminalBody" tabindex="0" aria-label="Interactive terminal — type commands here">
+      <div class="term-output" id="termOutput">
+        <div class="term-line">fuadOS v1.0 — type <strong>help</strong> and press Enter to begin.</div>
+        <div class="term-line term-dim">Tip: this terminal runs entirely in your browser. No data is sent anywhere.</div>
+      </div>
+      <div class="term-input-line">
+        <span class="term-prompt">fuad@portfolio:~$</span>
+        <input type="text" id="termInput" class="term-input" autocomplete="off" autocapitalize="off"
+               autocorrect="off" spellcheck="false" placeholder="type a command…" aria-label="Terminal input">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================
+     PLAY A MINI-GAME
+     =================================================== -->
+<section class="section container-x">
+  <h2 class="section-title reveal">Play a Game</h2>
+  <p class="section-sub reveal">
+    A tiny Snake game built in pure JavaScript — take a break, beat the high
+    score. Desktop: arrow keys or WASD. Mobile: swipe inside the board.
+  </p>
+
+  <div class="game-wrap reveal">
+    <div class="game-stats">
+      <div class="game-stat">
+        <span class="game-stat-lbl">Score</span>
+        <span class="game-stat-val" id="snakeScore">0</span>
+      </div>
+      <div class="game-stat">
+        <span class="game-stat-lbl">Best</span>
+        <span class="game-stat-val" id="snakeBest">0</span>
+      </div>
+      <div class="game-controls">
+        <button type="button" id="snakeStart" class="btn btn-primary btn-sm">Start</button>
+        <button type="button" id="snakePause" class="btn btn-ghost btn-sm" disabled>Pause</button>
+      </div>
+    </div>
+    <div class="game-board-wrap">
+      <canvas id="snakeCanvas" width="300" height="300" aria-label="Snake game board"></canvas>
+      <div class="game-overlay" id="snakeOverlay">
+        <div class="game-overlay-inner">
+          <h4 id="snakeOverlayTitle">Ready?</h4>
+          <p id="snakeOverlayText">Press <kbd>Start</kbd> or any arrow key to play.</p>
+          <button type="button" id="snakeRestart" class="btn btn-primary btn-sm">Start Game</button>
+        </div>
+      </div>
+    </div>
+    <p class="game-hint">Arrow keys / WASD on desktop · swipe on mobile</p>
+  </div>
+</section>
+
+<!-- ===================================================
+     CURRENTLY LEARNING — rotating widget
+     =================================================== -->
+<section class="section container-x">
+  <h2 class="section-title reveal">Currently Learning</h2>
+  <p class="section-sub reveal">A rotating peek at what I'm exploring this week.</p>
+
+  <div class="learning-grid reveal">
+    <div class="learning-card glass-card">
+      <div class="learning-icon">🧠</div>
+      <div>
+        <h4 id="learningTitle">LangChain &amp; RAG</h4>
+        <p id="learningDesc">Building retrieval-augmented generation pipelines with LangChain, vector stores, and OpenAI embeddings.</p>
+      </div>
+    </div>
+
+    <div class="learning-card glass-card">
+      <div class="learning-icon">⚙️</div>
+      <div>
+        <h4>Rust</h4>
+        <p>Exploring systems programming with Rust — ownership, borrowing, and zero-cost abstractions.</p>
+      </div>
+    </div>
+
+    <div class="learning-card glass-card">
+      <div class="learning-icon">📈</div>
+      <div>
+        <h4>Kubernetes</h4>
+        <p>Learning to orchestrate containers at scale — deployments, services, ingress, and Helm charts.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block page_js %}
+<script src="{% static 'js/terminal.js' %}" defer></script>
+<script src="{% static 'js/snake.js' %}" defer></script>
+<script src="{% static 'js/learning.js' %}" defer></script>
 {% endblock %}

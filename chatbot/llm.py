@@ -83,7 +83,7 @@ def _providers():
 
 def _system_prompt() -> str:
     """Return the chatbot's system prompt — fixed persona for Fuad's site."""
-    name = getattr(settings, "SITE_FULL_NAME", "Md. Al Fahim Fuyad")
+    name = getattr(settings, "SITE_FULL_NAME", "Al Fahim Fuad")
     title = getattr(
         settings,
         "SITE_TITLE",
