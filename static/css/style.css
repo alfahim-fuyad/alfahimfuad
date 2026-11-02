@@ -696,9 +696,10 @@ a:hover { color: var(--magenta); }
 }
 
 @media (max-width: 600px) {
-    /* Premium horizontal breathing room — cards no longer touch the
-       screen edges. 24px each side gives a clear gutter on phones. */
-    .container-x { padding: 0 24px; }
+    /* Premium horizontal breathing room — 28px gutters on each side
+       give cards a clear, comfortable margin from the screen edges.
+       This is the key fix for the "edge-to-edge" feeling on mobile. */
+    .container-x { padding: 0 28px; }
     .cv-hero { padding-top: 28px; }
     .cv-hero-grid { gap: 22px; }
 
@@ -755,13 +756,15 @@ a:hover { color: var(--magenta); }
     .edu-grid,
     .about-grid,
     .skills-grid,
-    .services-grid { gap: 18px; }
+    .services-grid,
+    .minigames-grid,
+    .learning-grid { gap: 20px; }
 }
 
 @media (max-width: 400px) {
-    /* Keep a minimum 20px gutter even on the smallest phones (iPhone SE
-       at 375px → 335px content width) so cards never touch the edges. */
-    .container-x { padding: 0 20px; }
+    /* On the smallest phones (iPhone SE 375px), 24px gutters keep cards
+       well clear of the edges while leaving enough content width. */
+    .container-x { padding: 0 24px; }
     .nav-inner { padding: 0 14px; }
     .cv-name { font-size: 1.85rem; }
     .profile-card { max-width: 200px; }
@@ -771,7 +774,9 @@ a:hover { color: var(--magenta); }
     .pro-cert-grid,
     .pro-achievement-list,
     .edu-grid,
-    .about-grid { gap: 16px; }
+    .about-grid,
+    .minigames-grid,
+    .learning-grid { gap: 18px; }
 }
 
 /* ================================================================
@@ -3129,6 +3134,211 @@ html[data-theme="dark"] .modal-x .close-x {
     }
     .chatbot-bubble { right: 12px; bottom: 12px; }
 }
+
+
+/* ================================================================
+   FEATURE APPEND (round 5) — GitHub stats, skill bars, status widget
+   ================================================================ */
+
+/* GitHub stats grid */
+.gh-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 18px;
+    margin-top: 8px;
+}
+.gh-stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px 16px 18px;
+    text-align: center;
+    transition: transform .25s, border-color .25s, box-shadow .25s;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+.gh-stat-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-glass);
+}
+.gh-stat-icon {
+    width: 48px; height: 48px;
+    margin: 0 auto 12px;
+    border-radius: 14px;
+    background: var(--accent-grad);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 8px 20px rgba(96, 165, 250, 0.28);
+}
+.gh-stat-num {
+    display: block;
+    font-family: var(--font-head);
+    font-size: clamp(1.6rem, 4vw, 2.1rem);
+    font-weight: 800;
+    color: var(--cyan);
+    letter-spacing: -.5px;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+.gh-stat-lbl {
+    display: block;
+    margin-top: 6px;
+    font-size: .76rem;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-dim);
+    font-weight: 600;
+}
+
+
+/* Skill proficiency bars */
+.skills-bars {
+    max-width: 680px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+.skill-bar-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr auto;
+    align-items: center;
+    gap: 14px;
+}
+.skill-bar-name {
+    font-family: var(--font-head);
+    font-size: .88rem;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+}
+.skill-bar-track {
+    height: 10px;
+    background: rgba(96, 165, 250, 0.12);
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+.skill-bar-fill {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, #60a5fa 0%, #818cf8 50%, #c084fc 100%);
+    border-radius: 999px;
+    transition: width 1.2s cubic-bezier(.22, 1, .36, 1);
+    box-shadow: 0 0 12px rgba(96, 165, 250, 0.4);
+}
+.skill-bar-pct {
+    font-family: var(--font-head);
+    font-size: .82rem;
+    font-weight: 700;
+    color: var(--cyan);
+    min-width: 36px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 600px) {
+    .skill-bar-row {
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+            "name pct"
+            "track track";
+        gap: 6px 12px;
+    }
+    .skill-bar-name { grid-area: name; }
+    .skill-bar-pct  { grid-area: pct; }
+    .skill-bar-track { grid-area: track; width: 100%; }
+    .gh-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .gh-stat-card { padding: 18px 10px 14px; }
+    .gh-stat-icon { width: 40px; height: 40px; }
+    .gh-stat-num { font-size: 1.4rem; }
+}
+@media (max-width: 400px) {
+    .gh-stats-grid { gap: 10px; }
+}
+
+
+/* Local time + status widget */
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px;
+    max-width: 680px;
+    margin: 0 auto;
+}
+.status-card {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 22px 24px;
+}
+.status-icon {
+    width: 46px; height: 46px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: var(--accent-grad);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 6px 16px rgba(96, 165, 250, 0.25);
+}
+.status-icon.status-dot-icon {
+    background: transparent;
+    box-shadow: none;
+    border: 1px solid var(--border-strong);
+}
+.status-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18), 0 0 12px rgba(34, 197, 94, 0.5);
+    animation: status-pulse 2s ease-in-out infinite;
+}
+@keyframes status-pulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18), 0 0 12px rgba(34, 197, 94, 0.5); }
+    50%      { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0.10), 0 0 18px rgba(34, 197, 94, 0.7); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .status-dot { animation: none; }
+}
+
+.status-card h4 {
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0 0 6px;
+    letter-spacing: -.2px;
+}
+.status-time {
+    font-family: var(--font-head);
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--cyan);
+    letter-spacing: -.5px;
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+}
+.status-date {
+    font-size: .82rem;
+    color: var(--text-dim);
+    margin: 4px 0 0;
+}
+.status-text {
+    font-size: .95rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+}
+.status-sub-text {
+    font-size: .82rem;
+    color: var(--text-dim);
+    margin: 4px 0 0;
+}
+
 
 
 

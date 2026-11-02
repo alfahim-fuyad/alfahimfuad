@@ -3,7 +3,11 @@ services:
     name: fuadfolio
     runtime: python
     plan: free
-    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput && (python manage.py create_superuser || true)"
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput"
+    # Note: the superuser is auto-created by a post_migrate signal in
+    # home/signals.py — no separate command needed. It reads
+    # DJANGO_SUPERUSER_USERNAME / EMAIL / PASSWORD env vars and falls
+    # back to fuad / fuad@email.com / fuad1234 when they are unset.
     startCommand: "gunicorn FuadFolio.wsgi:application --bind 0.0.0.0:$PORT"
     envVars:
       - key: PYTHON_VERSION
