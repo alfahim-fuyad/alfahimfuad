@@ -141,11 +141,14 @@
     })();
   </script>
 
-  {# ============================================================
+  {% comment %}
      FLOATING CHATBOT WIDGET
      Adds a chat bubble bottom-right on every page. Talks to /chatbot/chat/
-     via static/js/chatbot.js. Server-side failover: Groq → OpenRouter.
-     ============================================================ #}
+     via static/js/chatbot.js. Server-side failover: Groq -> OpenRouter.
+     NOTE: Django's hash-style comment tag is single-line only, so
+     use the comment/endcomment block tags for multi-line notes like
+     this one.
+  {% endcomment %}
 
   <button id="chatbotBubble" class="chatbot-bubble" aria-label="Open chat assistant" aria-haspopup="dialog">
     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

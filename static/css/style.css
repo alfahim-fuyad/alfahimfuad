@@ -1195,6 +1195,147 @@ html[data-theme="dark"] .chip {
 }
 
 
+/* ================================================================
+   DARK THEME — round 2 fixes
+   ----------------------------------------------------------------
+   Several containers in the original light theme use hardcoded
+   `rgba(255,255,255,X)` backgrounds (translucent white). In dark
+   mode those render as gray panels over the dark body, killing
+   contrast for any text sitting on them. The rules below swap
+   every one of them for a translucent DARK surface so the dark
+   theme actually looks dark and text stays readable.
+   ================================================================ */
+
+/* Mobile nav menu (open state) */
+html[data-theme="dark"] .nav-links.open {
+    background: rgba(13, 17, 28, 0.97);
+    border-color: var(--border-strong);
+}
+
+/* Ghost button — was rgba(255,255,255,.88) → near-white pill */
+html[data-theme="dark"] .btn-ghost {
+    background: rgba(17, 24, 39, 0.55);
+    color: var(--cyan);
+    border-color: var(--border-strong);
+}
+html[data-theme="dark"] .btn-ghost:hover {
+    background: rgba(96, 165, 250, .14);
+    color: #fff;
+}
+
+/* Hero social icon buttons */
+html[data-theme="dark"] .social-icon-btn {
+    background: rgba(17, 24, 39, 0.55);
+    border-color: var(--border-strong);
+    color: var(--cyan);
+}
+html[data-theme="dark"] .social-icon-btn:hover {
+    background: var(--accent-grad);
+    color: #fff;
+    border-color: transparent;
+}
+
+/* Profile card (hero portrait) — was a white gradient */
+html[data-theme="dark"] .profile-card {
+    background: linear-gradient(165deg, rgba(17, 24, 39, 0.92), rgba(17, 24, 39, 0.72));
+    border-color: var(--border-strong);
+}
+html[data-theme="dark"] .profile-card::before {
+    background: linear-gradient(165deg, rgba(96, 165, 250, .25), rgba(168, 85, 247, .15));
+}
+html[data-theme="dark"] .profile-badges span {
+    background: rgba(96, 165, 250, .14);
+    border-color: rgba(96, 165, 250, .25);
+    color: var(--cyan);
+}
+
+/* Stat cards on the home page */
+html[data-theme="dark"] .stat-card {
+    background: rgba(17, 24, 39, 0.55);
+    border-color: var(--border);
+}
+html[data-theme="dark"] .stat-card:hover {
+    border-color: var(--border-strong);
+}
+
+/* Skill groups on the home page */
+html[data-theme="dark"] .skill-group {
+    background: rgba(17, 24, 39, 0.55);
+    border-color: var(--border);
+}
+html[data-theme="dark"] .skill-group:hover {
+    border-color: var(--border-strong);
+}
+
+/* Service cards ("What I Do") */
+html[data-theme="dark"] .service-card {
+    background: linear-gradient(145deg, rgba(17, 24, 39, 0.72), rgba(17, 24, 39, 0.42));
+    border-color: var(--border);
+}
+html[data-theme="dark"] .service-card:hover {
+    border-color: var(--border-strong);
+}
+html[data-theme="dark"] .service-card::before {
+    background: linear-gradient(120deg, rgba(96, 165, 250, .08) 0%, transparent 30%, transparent 70%, rgba(168, 85, 247, .05) 100%);
+}
+
+/* Generic glass card (about page contact cards, others, etc.) */
+html[data-theme="dark"] .glass-card {
+    background: linear-gradient(145deg, rgba(17, 24, 39, 0.70), rgba(17, 24, 39, 0.40));
+    border-color: var(--border);
+}
+html[data-theme="dark"] .glass-card::before {
+    background: linear-gradient(120deg, rgba(96, 165, 250, .07) 0%, transparent 30%, transparent 70%, rgba(168, 85, 247, .05) 100%);
+    opacity: .35;
+}
+html[data-theme="dark"] .glass-card:hover {
+    border-color: var(--border-strong);
+}
+
+/* Project cards on the Projects page */
+html[data-theme="dark"] .project-card {
+    background: linear-gradient(145deg, rgba(17, 24, 39, 0.72), rgba(17, 24, 39, 0.42));
+    border-color: var(--border);
+}
+html[data-theme="dark"] .project-card:hover {
+    border-color: var(--border-strong);
+}
+
+/* Project thumb placeholder gradient (when no admin image) */
+html[data-theme="dark"] .project-thumb {
+    background: linear-gradient(135deg, #1e293b, #0f172a 50%, #1e1b4b);
+}
+html[data-theme="dark"] .project-thumb.placeholder::after {
+    opacity: .35;
+}
+
+/* Education thumb placeholder (light blue → dark navy) */
+html[data-theme="dark"] .edu-thumb {
+    background: linear-gradient(135deg, #1e293b, #0f172a 50%, #1e1b4b);
+    border-bottom-color: rgba(96, 165, 250, .15);
+}
+html[data-theme="dark"] .edu-thumb.placeholder::after {
+    opacity: .35;
+}
+
+/* Education badge (School / College / University) */
+html[data-theme="dark"] .edu-badge {
+    background: rgba(13, 17, 28, 0.92);
+    border-color: var(--border-strong);
+    color: var(--cyan);
+}
+
+/* Modal close button (project detail modal) */
+html[data-theme="dark"] .modal-x .close-x {
+    background: rgba(17, 24, 39, 0.6);
+    border-color: var(--border-strong);
+    color: var(--cyan);
+}
+
+/* Profile summary icon block on the professional page already uses
+   var(--accent-grad) — fine. */
+
+
 /* ----------------------------------------------------------------
    2) DAY / NIGHT THEME TOGGLE
    ---------------------------------------------------------------- */
