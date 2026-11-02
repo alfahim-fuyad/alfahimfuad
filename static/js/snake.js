@@ -161,7 +161,7 @@
     pauseBtn.disabled = false;
     pauseBtn.textContent = 'Pause';
     clearInterval(tickId);
-    tickId = setInterval(tick, 130);
+    tickId = setInterval(tick, 180);  // slowed down from 130ms → 180ms per tick
   }
 
   function pause() {

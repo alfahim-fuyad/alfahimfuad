@@ -14,11 +14,7 @@
   if (!el) return;
 
   var SENTENCES = [
-    "I turn data into intelligence.",
-    "I build intelligent AI solutions.",
-    "I transform ideas into products.",
-    "I develop Machine Learning models.",
-    "I build scalable web applications.",
+    "Data Scientist  •  ML Engineer  •  AI Builder",
   ];
 
   var reduce = window.matchMedia &&

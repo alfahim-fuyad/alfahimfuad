@@ -20,13 +20,9 @@
 
       <h1 class="cv-name">Al Fahim <span class="grad">Fuad</span></h1>
 
-      <div class="hero-typewriter" aria-label="Rotating tagline">
+      <div class="hero-typewriter" aria-label="Data Scientist • ML Engineer • AI Builder">
         <span class="hero-typewriter-text" id="typewriterText"></span><span class="hero-typewriter-cursor" aria-hidden="true"></span>
       </div>
-
-      <p class="cv-title">
-        Data Scientist &nbsp;&bull;&nbsp; ML Engineer &nbsp;&bull;&nbsp; AI Builder
-      </p>
 
       <p class="cv-summary">
         I build intelligent systems — from end-to-end data pipelines and
@@ -306,7 +302,7 @@
       </div>
     </div>
     <div class="game-board-wrap">
-      <canvas id="snakeCanvas" width="300" height="300" aria-label="Snake game board"></canvas>
+      <canvas id="snakeCanvas" width="400" height="400" aria-label="Snake game board"></canvas>
       <div class="game-overlay" id="snakeOverlay">
         <div class="game-overlay-inner">
           <h4 id="snakeOverlayTitle">Ready?</h4>
@@ -348,77 +344,6 @@
       <div>
         <h4>Kubernetes</h4>
         <p>Learning to orchestrate containers at scale — deployments, services, ingress, and Helm charts.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================================================
-     MORE MINI-GAMES — Reaction, Memory, Tic-Tac-Toe
-     =================================================== -->
-<section class="section container-x">
-  <h2 class="section-title reveal">Quick Games</h2>
-  <p class="section-sub reveal">
-    Three tiny browser games — test your reflexes, memory, and logic.
-  </p>
-
-  <div class="minigames-grid">
-    {# ---- REACTION TIME ---- #}
-    <div class="minigame-card reveal">
-      <div class="minigame-head">
-        <div class="minigame-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7v8l10-12h-7z"/></svg>
-        </div>
-        <div>
-          <h4>Reaction Time</h4>
-          <p>Click when the pad turns green.</p>
-        </div>
-      </div>
-      <div class="minigame-stage">
-        <div class="reaction-pad idle" id="reactionPad">Click to start</div>
-      </div>
-      <div class="minigame-actions">
-        <span class="minigame-stat">Best: <strong id="reactionBest">—</strong></span>
-      </div>
-    </div>
-
-    {# ---- MEMORY MATCH ---- #}
-    <div class="minigame-card reveal">
-      <div class="minigame-head">
-        <div class="minigame-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h6v6H9zM3 9h6v6H3zM15 9h6v6h-6zM9 15h6v6H9z"/></svg>
-        </div>
-        <div>
-          <h4>Memory Match</h4>
-          <p>Find all 4 matching pairs.</p>
-        </div>
-      </div>
-      <div class="minigame-stage">
-        <div class="memory-grid" id="memoryGrid"></div>
-      </div>
-      <div class="minigame-actions">
-        <button type="button" id="memoryReset" class="btn btn-ghost btn-sm">Shuffle</button>
-        <span class="minigame-stat">Moves: <strong id="memoryMoves">0</strong></span>
-      </div>
-    </div>
-
-    {# ---- TIC-TAC-TOE ---- #}
-    <div class="minigame-card reveal">
-      <div class="minigame-head">
-        <div class="minigame-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
-        </div>
-        <div>
-          <h4>Tic-Tac-Toe</h4>
-          <p>You are X. Play against a simple AI.</p>
-        </div>
-      </div>
-      <div class="minigame-stage">
-        <div class="ttt-grid" id="tttGrid"></div>
-      </div>
-      <div class="minigame-actions">
-        <button type="button" id="tttReset" class="btn btn-ghost btn-sm">New round</button>
-        <span class="minigame-stat" id="tttStatus">Your turn</span>
       </div>
     </div>
   </div>
@@ -570,7 +495,6 @@
 <script src="{% static 'js/terminal.js' %}" defer></script>
 <script src="{% static 'js/snake.js' %}" defer></script>
 <script src="{% static 'js/learning.js' %}" defer></script>
-<script src="{% static 'js/minigames.js' %}" defer></script>
 <script src="{% static 'js/quote.js' %}" defer></script>
 <script src="{% static 'js/gh-stats.js' %}" defer></script>
 <script src="{% static 'js/skill-bars.js' %}" defer></script>
