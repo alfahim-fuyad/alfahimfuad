@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Others — Professional · {{ owner_name|default:"fuadFolio" }}{% endblock %}
+
+{% block meta_description %}Professional showcase for {{ owner_name|default:"Md. Al Fahim Fuyad" }} — work experience, certifications, achievements, skills, and core competencies.{% endblock %}
+
+{% block content %}
+<section class="section container-x">
+  <h2 class="section-title reveal">Others</h2>
+  <p class="section-sub reveal">
+    The professional side of {{ owner_name|default:"Md. Al Fahim Fuyad" }}
+    {{ owner_title|default:"" }} — experience, certifications, achievements,
+    and the skill stack behind the work.
+  </p>
+
+  {# =================== SUMMARY =================== #}
+  {% if profile_summary %}
+    <div class="pro-summary glass-card reveal">
+      <div class="pro-summary-icon">∑</div>
+      <div>
+        <h3 class="pro-summary-name">{{ owner_name }}</h3>
+        <p class="pro-summary-title">{{ owner_title }}</p>
+        <p class="pro-summary-text">{{ profile_summary }}</p>
+      </div>
+    </div>
+  {% endif %}
+
+  {# =================== EXPERIENCE =================== #}
+  <div class="pro-band reveal">
+    <h3 class="pro-band-title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-4V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M10 7h4"/></svg>
+      Work Experience
+    </h3>
+
+    {% if has_experience %}
+      <ol class="pro-timeline">
+        {% for e in experiences %}
+          <li class="pro-timeline-item reveal{% if e.current %} current{% endif %}">
+            <div class="pro-timeline-dot" aria-hidden="true"></div>
+            <div class="pro-timeline-card glass-card">
+              <div class="pro-timeline-head">
+                <h4>{{ e.role }}</h4>
+                {% if e.period %}<span class="pro-timeline-period">{{ e.period }}</span>{% endif %}
+              </div>
+              {% if e.organization or e.location %}
+                <p class="pro-timeline-org">
+                  {% if e.organization %}
+                    {{ e.organization }}{% if e.location %} &middot; {% endif %}
+                  {% endif %}
+                  {% if e.location %}{{ e.location }}{% endif %}
+                  {% if e.current %}<span class="pro-now-pill">Current</span>{% endif %}
+                </p>
+              {% endif %}
+              {% if e.bullets %}
+                <ul class="pro-bullets">
+                  {% for b in e.bullets %}<li>{{ b }}</li>{% endfor %}
+                </ul>
+              {% endif %}
+              {% if e.url %}
+                <a class="pro-link" href="{{ e.url }}" target="_blank" rel="noopener">Visit <span aria-hidden="true">↗</span></a>
+              {% endif %}
+            </div>
+          </li>
+        {% endfor %}
+      </ol>
+    {% else %}
+      <div class="empty-state reveal">
+        <h3>No experience entries yet</h3>
+        <p>Add work experience rows in <a href="/admin/professional/experience/">/admin/</a> and they'll appear here as a timeline.</p>
+      </div>
+    {% endif %}
+  </div>
+
+  {# =================== SKILLS =================== #}
+  {% if has_skills or has_competencies %}
+    <div class="pro-band reveal">
+      <h3 class="pro-band-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        Skills &amp; Competencies
+      </h3>
+
+      {% if has_skills %}
+        <div class="pro-skills-grid">
+          {% for cat, chips in skill_categories %}
+            <div class="skill-group">
+              {% if cat %}<div class="skill-group-label">{{ cat }}</div>{% endif %}
+              <div class="skill-chips">
+                {% for c in chips %}<span class="chip">{{ c }}</span>{% endfor %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if has_competencies %}
+        <div class="pro-competencies">
+          {% for c in core_competencies %}<span class="chip pro-comp-chip">{{ c }}</span>{% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {# =================== CERTIFICATIONS =================== #}
+  <div class="pro-band reveal">
+    <h3 class="pro-band-title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg>
+      Certifications
+    </h3>
+
+    {% if has_certs %}
+      <div class="pro-cert-grid">
+        {% for c in certifications %}
+          <article class="pro-cert-card glass-card reveal{% if c.featured %} featured{% endif %}">
+            <div class="pro-cert-thumb {% if not c.image %}placeholder{% endif %}">
+              {% if c.image %}
+                <img src="{{ c.image }}" alt="{{ c.title }}" loading="lazy">
+              {% else %}
+                <span class="pro-cert-icon">🎓</span>
+              {% endif %}
+            </div>
+            <div class="pro-cert-body">
+              <h4>{{ c.title }}</h4>
+              {% if c.issuer %}<p class="pro-cert-issuer">{{ c.issuer }}</p>{% endif %}
+              <div class="pro-cert-meta">
+                {% if c.date %}<span>{{ c.date }}</span>{% endif %}
+                {% if c.credential_id %}<span title="Credential ID">ID: {{ c.credential_id }}</span>{% endif %}
+              </div>
+              {% if c.url %}
+                <a class="pro-link" href="{{ c.url }}" target="_blank" rel="noopener">Verify <span aria-hidden="true">↗</span></a>
+              {% endif %}
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state reveal">
+        <h3>No certifications yet</h3>
+        <p>Add certification rows in <a href="/admin/professional/certification/">/admin/</a> to feature them here.</p>
+      </div>
+    {% endif %}
+  </div>
+
+  {# =================== ACHIEVEMENTS =================== #}
+  <div class="pro-band reveal">
+    <h3 class="pro-band-title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9a6 6 0 0 0 12 0V4H6z"/><path d="M6 4h12M9 20h6M12 14v6"/></svg>
+      Achievements
+    </h3>
+
+    {% if has_achievements %}
+      <ul class="pro-achievement-list">
+        {% for a in achievements %}
+          <li class="pro-achievement reveal">
+            <span class="pro-achievement-icon" aria-hidden="true">{{ a.icon }}</span>
+            <div class="pro-achievement-body">
+              <h4>
+                {{ a.title }}
+                {% if a.date %}<span class="pro-achievement-date">{{ a.date }}</span>{% endif %}
+              </h4>
+              {% if a.description %}<p>{{ a.description }}</p>{% endif %}
+              {% if a.url %}
+                <a class="pro-link" href="{{ a.url }}" target="_blank" rel="noopener">Read more <span aria-hidden="true">↗</span></a>
+              {% endif %}
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="empty-state reveal">
+        <h3>No achievements yet</h3>
+        <p>Add achievement rows in <a href="/admin/professional/achievement/">/admin/</a> to highlight them here.</p>
+      </div>
+    {% endif %}
+  </div>
+
+  {# =================== LANGUAGES + INTERESTS =================== #}
+  {% if has_languages or has_interests %}
+    <div class="pro-band reveal">
+      <h3 class="pro-band-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+        Languages &amp; Interests
+      </h3>
+
+      <div class="pro-languages-interests">
+        {% if has_languages %}
+          <div class="pro-li-block">
+            <h5>Languages</h5>
+            <div class="skill-chips">
+              {% for lang, level in languages %}
+                <span class="chip">{{ lang }}{% if level %} <em class="pro-level">· {{ level }}</em>{% endif %}</span>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        {% if has_interests %}
+          <div class="pro-li-block">
+            <h5>Interests</h5>
+            <div class="skill-chips">
+              {% for i in interests %}<span class="chip">{{ i }}</span>{% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+</section>
+{% endblock %}

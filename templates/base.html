@@ -1,0 +1,192 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#eaf2ff">
+  <meta name="description" content="{% block meta_description %}Md. Al Fahim Fuyad — Data Science & Machine Learning portfolio. Building intelligent, data-driven, and futuristic experiences.{% endblock %}">
+  <title>{% block title %}fuadFolio — Md. Al Fahim Fuyad{% endblock %}</title>
+  <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+  <link rel="icon" type="image/png" sizes="512x512" href="{% static 'images/logo.png' %}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block page_css %}{% endblock %}
+
+  {# Apply the saved theme BEFORE the page paints to avoid a flash. #}
+  <script src="{% static 'js/theme.js' %}"></script>
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <header class="site-nav">
+    <div class="nav-inner">
+      <a class="brand" href="{% url 'home' %}">
+        <img src="{% static 'images/logo.png' %}" alt="fuadFolio" class="logo" onerror="this.style.display='none'">
+        <span>fuadFolio</span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
+        <li><a href="{% url 'about' %}" class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}">About</a></li>
+        <li><a href="{% url 'portfolio' %}" class="{% if request.resolver_match.url_name == 'portfolio' %}active{% endif %}">Projects</a></li>
+        <li><a href="{% url 'others' %}" class="{% if request.resolver_match.url_name == 'others' %}active{% endif %}">Others</a></li>
+        <li><a href="{% url 'myworld' %}" class="{% if request.resolver_match.url_name == 'myworld' %}active{% endif %}">My World</a></li>
+        <!-- <li><a href="{% url 'contact' %}" class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}">Contact</a></li> -->
+        <li class="nav-theme-li">
+          <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch to night theme" aria-pressed="false" title="Day / Night theme">
+            <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+            <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </button>
+        </li>
+        <li><a href="{% url 'download_cv' %}" class="hire-me-btn">Download CV</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="page-wrap">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-foot">
+    <a class="foot-brand" href="{% url 'home' %}">fuadFolio</a>
+    <p class="foot-tagline">Building intelligent systems with data & code.</p>
+    <div class="socials">
+      <a href="mailto:{{ site.email }}" aria-label="Email">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m3 6 9 7 9-7"/></svg>
+      </a>
+      <a href="{{ site.linkedin_url }}" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM10 9h3.84v1.64h.05c.53-1 1.84-2.06 3.78-2.06 4.05 0 4.8 2.66 4.8 6.13V21h-4v-5.5c0-1.31-.03-3-1.83-3-1.84 0-2.12 1.43-2.12 2.91V21h-4z"/></svg>
+      </a>
+      <a href="{{ site.github_url }}" target="_blank" rel="noopener" aria-label="GitHub">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.55v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.2 1.77 1.2 1.04 1.78 2.72 1.27 3.39.97.1-.75.4-1.27.74-1.56-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.78 0c2.21-1.49 3.18-1.18 3.18-1.18.63 1.58.23 2.75.11 3.04.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.4-5.25 5.68.41.36.78 1.06.78 2.14v3.18c0 .31.21.66.8.55A11.5 11.5 0 0 0 12 .5z"/></svg>
+      </a>
+      <a href="{{ site.facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+      </a>
+    </div>
+    <p class="foot-copy">© {% now "Y" %} Md. Al Fahim Fuyad &mdash; Crafted with code &amp; curiosity. &nbsp;|&nbsp; <a href="/admin/" style="opacity:.5;font-size:.78rem">Admin</a></p>
+  </footer>
+
+  <script>
+    (function () {
+      var btn = document.getElementById('navToggle');
+      var menu = document.getElementById('navLinks');
+      if (btn && menu) {
+        btn.addEventListener('click', function () {
+          var open = menu.classList.toggle('open');
+          btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+          btn.classList.toggle('is-open', open);
+        });
+        menu.querySelectorAll('a').forEach(function (a) {
+          a.addEventListener('click', function () {
+            menu.classList.remove('open');
+            btn.classList.remove('is-open');
+            btn.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
+    })();
+
+    (function () {
+      var els = document.querySelectorAll('.reveal');
+      if (!('IntersectionObserver' in window) || !els.length) {
+        els.forEach(function (el) { el.classList.add('visible'); });
+        return;
+      }
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add('visible');
+            obs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.06 });
+      els.forEach(function (el) { obs.observe(el); });
+    })();
+
+    (function () {
+      var cards = document.querySelectorAll('[data-tilt-card]');
+      var canTilt = window.matchMedia &&
+        window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
+        !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (!canTilt) return;
+
+      cards.forEach(function (card) {
+        card.addEventListener('pointermove', function (event) {
+          var bounds = card.getBoundingClientRect();
+          var x = (event.clientX - bounds.left) / bounds.width;
+          var y = (event.clientY - bounds.top) / bounds.height;
+          var rotateY = (x - 0.5) * 10;
+          var rotateX = (0.5 - y) * 10;
+
+          card.style.setProperty('--shine-x', (x * 100) + '%');
+          card.style.setProperty('--shine-y', (y * 100) + '%');
+          card.style.transform = 'perspective(900px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) translateY(-8px)';
+        });
+
+        card.addEventListener('pointerleave', function () {
+          card.style.transform = '';
+          card.style.removeProperty('--shine-x');
+          card.style.removeProperty('--shine-y');
+        });
+      });
+    })();
+  </script>
+
+  {# ============================================================
+     FLOATING CHATBOT WIDGET
+     Adds a chat bubble bottom-right on every page. Talks to /chatbot/chat/
+     via static/js/chatbot.js. Server-side failover: Groq → OpenRouter.
+     ============================================================ #}
+
+  <button id="chatbotBubble" class="chatbot-bubble" aria-label="Open chat assistant" aria-haspopup="dialog">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      <circle cx="8.5" cy="10" r="0.9" fill="currentColor" stroke="none"/>
+      <circle cx="12" cy="10" r="0.9" fill="currentColor" stroke="none"/>
+      <circle cx="15.5" cy="10" r="0.9" fill="currentColor" stroke="none"/>
+    </svg>
+    <span class="chatbot-bubble-ping"></span>
+  </button>
+
+  <section id="chatbotPanel" class="chatbot-panel" role="dialog" aria-modal="false" aria-labelledby="chatbotTitle">
+    <header class="chatbot-head">
+      <div class="chatbot-id">
+        <span class="chatbot-avatar">FB</span>
+        <div>
+          <h3 id="chatbotTitle">fuadBot</h3>
+          <span class="chatbot-sub">
+            <span class="chatbot-dot"></span>
+            Online
+            <span class="chatbot-provider-pill" id="chatbotProvider" data-provider="" style="display:none;"></span>
+          </span>
+        </div>
+      </div>
+      <button type="button" id="chatbotClose" class="chatbot-close" aria-label="Close chat">×</button>
+    </header>
+
+    <div id="chatbotLog" class="chatbot-log" aria-live="polite"></div>
+
+    <form id="chatbotForm" class="chatbot-form" autocomplete="off">
+      <textarea id="chatbotInput" class="chatbot-input" rows="1"
+                placeholder="Ask about Fuad's projects, skills, education…"
+                maxlength="2000"></textarea>
+      <button type="submit" id="chatbotSend" class="chatbot-send" aria-label="Send message">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg>
+      </button>
+    </form>
+  </section>
+
+  <script src="{% static 'js/chatbot.js' %}" defer></script>
+
+  {% block page_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Projects — fuadFolio{% endblock %}
+
+{% block content %}
+<section class="section container-x">
+  <h2 class="section-title reveal">Selected Projects</h2>
+  <p class="section-sub reveal">
+    Pulled live from
+    <a href="{{ site.github_url }}" target="_blank" rel="noopener">GitHub</a>
+    — push a new public repo and it shows up here automatically.
+  </p>
+
+  <div class="project-grid">
+    {% for repo in repos %}
+      <article class="project-card reveal" data-modal="projectModal{{ forloop.counter }}">
+        <div class="project-thumb {% if not repo.admin_image %}placeholder{% endif %}">
+          {% if repo.admin_image %}
+            <img src="{{ repo.admin_image }}" alt="{{ repo.name }}" loading="lazy">
+          {% endif %}
+        </div>
+        <div class="project-body">
+          <h3>{{ repo.name }}</h3>
+          {% if repo.description %}<p>{{ repo.description }}</p>{% endif %}
+          <div class="repo-meta">
+            {% if repo.language %}<span class="repo-chip">{{ repo.language }}</span>{% endif %}
+            {% if repo.stars is not None %}<span class="repo-chip" title="Stars">★ {{ repo.stars }}</span>{% endif %}
+            {% if repo.forks is not None %}<span class="repo-chip" title="Forks">⑂ {{ repo.forks }}</span>{% endif %}
+            {% if repo.is_showcase %}<span class="repo-chip showcase-chip" title="Showcase">Showcase</span>{% endif %}
+          </div>
+          <div class="project-foot">
+            <span>View details</span>
+            <span>→</span>
+          </div>
+        </div>
+      </article>
+
+      <div class="modal-backdrop-x" id="projectModal{{ forloop.counter }}" role="dialog" aria-modal="true" aria-labelledby="projectModalLabel{{ forloop.counter }}">
+        <div class="modal-x">
+          <header>
+            <h3 id="projectModalLabel{{ forloop.counter }}">{{ repo.name }}</h3>
+            <button type="button" class="close-x" data-close aria-label="Close">×</button>
+          </header>
+          <div class="body">
+            {% if repo.admin_image %}
+              <img src="{{ repo.admin_image }}" alt="{{ repo.name }}">
+            {% endif %}
+            {% if repo.description %}<p>{{ repo.description }}</p>{% endif %}
+            {% if repo.topics %}
+              <div class="repo-topics">
+                {% for topic in repo.topics %}<span class="chip">{{ topic }}</span>{% endfor %}
+              </div>
+            {% endif %}
+            <div class="repo-meta mb-2">
+              {% if repo.language %}<span class="repo-chip">{{ repo.language }}</span>{% endif %}
+              {% if repo.stars is not None %}<span class="repo-chip" title="Stars">★ {{ repo.stars }} stars</span>{% endif %}
+              {% if repo.forks is not None %}<span class="repo-chip" title="Forks">⑂ {{ repo.forks }} forks</span>{% endif %}
+              {% if repo.updated_at %}<span class="repo-chip" title="Last updated">Updated {{ repo.updated_at|date:"M j, Y" }}</span>{% endif %}
+              {% if repo.is_showcase %}<span class="repo-chip showcase-chip">Showcase project</span>{% endif %}
+            </div>
+            <div class="cv-cta">
+              {% if repo.url %}
+                <a href="{{ repo.url }}" target="_blank" rel="noopener" class="btn btn-primary">View on GitHub ↗</a>
+              {% endif %}
+              {% if repo.homepage %}
+                <a href="{{ repo.homepage }}" target="_blank" rel="noopener" class="btn btn-ghost">Live Demo ↗</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="empty-state reveal">
+        {% if github_error %}
+          <h3 style="font-family:'Orbitron',sans-serif; color:var(--cyan); margin-top:0;">Couldn't reach GitHub</h3>
+          <p>GitHub's API didn't respond just now. Refresh the page in a bit — projects are pulled live from
+            <a href="{{ site.github_url }}" target="_blank" rel="noopener">{{ site.github_url }}</a>.</p>
+        {% else %}
+          <h3 style="font-family:'Orbitron',sans-serif; color:var(--cyan); margin-top:0;">No public repositories yet</h3>
+          <p>Once public repos are pushed to
+            <a href="{{ site.github_url }}" target="_blank" rel="noopener">{{ site.github_url }}</a>,
+            they'll appear here automatically.</p>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+
+  {% if showcase %}
+    <div class="showcase-band reveal">
+      <h3 class="showcase-title">Showcase</h3>
+      <p class="showcase-sub">Extra project highlights curated in the admin.</p>
+    </div>
+
+    <div class="project-grid">
+      {% with counter_offset=repos|length %}
+        {% for repo in showcase %}
+          {% with idx=forloop.counter|add:counter_offset %}
+            <article class="project-card reveal showcase-card" data-modal="projectModal{{ idx }}">
+              <div class="project-thumb {% if not repo.admin_image %}placeholder{% endif %}">
+                {% if repo.admin_image %}
+                  <img src="{{ repo.admin_image }}" alt="{{ repo.name }}" loading="lazy">
+                {% endif %}
+              </div>
+              <div class="project-body">
+                <h3>{{ repo.name }}</h3>
+                {% if repo.description %}<p>{{ repo.description }}</p>{% endif %}
+                <div class="repo-meta">
+                  <span class="repo-chip showcase-chip" title="Showcase">Showcase</span>
+                </div>
+                <div class="project-foot">
+                  <span>View details</span>
+                  <span>→</span>
+                </div>
+              </div>
+            </article>
+
+            <div class="modal-backdrop-x" id="projectModal{{ idx }}" role="dialog" aria-modal="true" aria-labelledby="projectModalLabel{{ idx }}">
+              <div class="modal-x">
+                <header>
+                  <h3 id="projectModalLabel{{ idx }}">{{ repo.name }}</h3>
+                  <button type="button" class="close-x" data-close aria-label="Close">×</button>
+                </header>
+                <div class="body">
+                  {% if repo.admin_image %}
+                    <img src="{{ repo.admin_image }}" alt="{{ repo.name }}">
+                  {% endif %}
+                  {% if repo.description %}<p>{{ repo.description }}</p>{% endif %}
+                  {% if repo.homepage %}
+                    <div class="cv-cta">
+                      <a href="{{ repo.homepage }}" target="_blank" rel="noopener" class="btn btn-primary">Open project ↗</a>
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% endwith %}
+        {% endfor %}
+      {% endwith %}
+    </div>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block page_js %}
+<script>
+  (function () {
+    document.querySelectorAll('[data-modal]').forEach(function (card) {
+      card.addEventListener('click', function () {
+        var id = card.getAttribute('data-modal');
+        var modal = document.getElementById(id);
+        if (modal) modal.classList.add('open');
+      });
+    });
+    document.querySelectorAll('.modal-backdrop-x').forEach(function (m) {
+      m.addEventListener('click', function (e) {
+        if (e.target === m || e.target.hasAttribute('data-close')) {
+          m.classList.remove('open');
+        }
+      });
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-backdrop-x.open').forEach(function (m) { m.classList.remove('open'); });
+      }
+    });
+  })();
+</script>
+{% endblock %}
