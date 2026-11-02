@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from .models import Profile
 from .github_api import get_github_user, get_github_repos
-from .cv_generator import build_cv_pdf
+from .cv_generator import build_cv_pdf, build_cv_data
 
 def home(request):
     profile = Profile.objects.first()
@@ -22,15 +22,14 @@ def home(request):
 
 
 def download_cv(request):
-    """Generate a fresh, ATS-friendly CV PDF from live GitHub + portfolio data.
+    """Generate a fresh, ATS-friendly CV PDF from the Profile row + Education.
 
     Built on every request (not stored on disk), so it always reflects the
-    latest GitHub repos, education entries, and admin-edited CV content with
-    no manual regeneration step.
+    latest admin-edited CV content with no manual regeneration step.
     """
     profile = Profile.objects.first()
-    cv_url = request.build_absolute_uri()
-    buf, filename = build_cv_pdf(profile, cv_url=cv_url)
+    data = build_cv_data(profile)
+    buf, filename = build_cv_pdf(data)
     response = HttpResponse(buf.getvalue(), content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response

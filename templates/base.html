@@ -10,6 +10,17 @@
   <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
   <link rel="icon" type="image/png" sizes="512x512" href="{% static 'images/logo.png' %}">
 
+  {# Open Graph + Twitter Card meta tags for social sharing #}
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="fuadFolio">
+  <meta property="og:title" content="{% block og_title %}fuadFolio — Al Fahim Fuad{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Al Fahim Fuad — Data Scientist, ML Engineer & AI Builder. Projects, skills, experience, and more.{% endblock %}">
+  <meta property="og:image" content="{% block og_image %}{% static 'images/logo.png' %}{% endblock %}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{% block twitter_title %}fuadFolio — Al Fahim Fuad{% endblock %}">
+  <meta name="twitter:description" content="{% block twitter_description %}Al Fahim Fuad — Data Scientist, ML Engineer & AI Builder.{% endblock %}">
+  <meta name="twitter:image" content="{% block twitter_image %}{% static 'images/logo.png' %}{% endblock %}">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -22,6 +33,9 @@
 </head>
 <body>
   <div class="bg-grid" aria-hidden="true"></div>
+
+  {# Reading progress bar — thin gradient line at the very top #}
+  <div class="reading-progress" id="readingProgress" aria-hidden="true"></div>
 
   <header class="site-nav">
     <div class="nav-inner">
@@ -142,6 +156,19 @@
   </script>
 
   {% comment %}
+     SCROLL-TO-TOP BUTTON + READING PROGRESS BAR
+     Appears on every page. The scroll-to-top button fades in after
+     scrolling down ~400px. The reading progress bar at the top shows
+     how far through the page the visitor has scrolled.
+  {% endcomment %}
+
+  <button type="button" class="scroll-top-btn" id="scrollTopBtn" aria-label="Scroll back to top">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <path d="M12 19V5M5 12l7-7 7 7"/>
+    </svg>
+  </button>
+
+  {% comment %}
      FLOATING CHATBOT WIDGET
      Adds a chat bubble bottom-right on every page. Talks to /chatbot/chat/
      via static/js/chatbot.js. Server-side failover: Groq -> OpenRouter.
@@ -189,6 +216,7 @@
   </section>
 
   <script src="{% static 'js/chatbot.js' %}" defer></script>
+  <script src="{% static 'js/scroll-utils.js' %}" defer></script>
 
   {% block page_js %}{% endblock %}
 </body>

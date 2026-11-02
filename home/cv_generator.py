@@ -147,7 +147,172 @@ def _circular_photo(path):
     return buf
 
 
-def build_cv_pdf(data, output_path="My-CV.pdf"):
+def build_cv_data(profile):
+    """Build the data dict for build_cv_pdf from a Profile model + live data.
+
+    Pulls from:
+      - the Profile row (name, title, summary, skills, experience,
+        languages, interests, photo, phone, location, website)
+      - the about.Education model (for the education section)
+      - Django settings (SITE_EMAIL, SITE_FULL_NAME, SITE_TITLE as
+        fallbacks when no Profile row exists)
+
+    Returns a dict in the format build_cv_pdf expects.
+    """
+    from django.conf import settings
+
+    # Lazy imports to avoid circular import issues.
+    try:
+        from about.models import Education
+    except Exception:
+        Education = None
+
+    name = (profile.full_name if profile and profile.full_name
+            else getattr(settings, "SITE_FULL_NAME", "Al Fahim Fuad"))
+    title = (profile.title if profile and profile.title
+             else getattr(settings, "SITE_TITLE", ""))
+
+    # Contact
+    contact = {}
+    if profile:
+        if profile.phone:
+            contact["Phone"] = profile.phone
+        if profile.website:
+            contact["Website"] = profile.website
+    contact["Email"] = getattr(settings, "SITE_EMAIL", "")
+    contact["Address"] = (profile.location if profile and profile.location
+                          else "Dhaka, Bangladesh")
+
+    # Skills — parse from Profile.skills text.
+    # Format: one category per line, "Category: item1, item2"
+    skills = []
+    if profile and profile.skills:
+        for line in profile.skills.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            if ":" in line:
+                _, items = line.split(":", 1)
+                for item in items.split(","):
+                    item = item.strip()
+                    if item:
+                        skills.append(item)
+            else:
+                skills.append(line)
+    if not skills:
+        skills = ["Python", "SQL", "Django", "JavaScript",
+                  "Machine Learning", "Data Analysis"]
+
+    # Languages — parse from Profile.languages ("Language: Level" per line)
+    languages = []
+    if profile and profile.languages:
+        for line in profile.languages.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            if ":" in line:
+                lang, level = line.split(":", 1)
+                languages.append((lang.strip(), level.strip()))
+            else:
+                languages.append((line, ""))
+    if not languages:
+        languages = [("English", "Professional"), ("Bengali", "Native")]
+
+    # Hobbies / interests
+    hobbies = []
+    if profile and profile.interests:
+        for line in profile.interests.replace(",", "\n").splitlines():
+            h = line.strip()
+            if h:
+                hobbies.append(h)
+
+    # Profile summary
+    profile_text = (profile.summary if profile and profile.summary
+                    else "Data Scientist and ML Engineer passionate about "
+                         "building intelligent systems end-to-end.")
+
+    # Experience — parse from Profile.experience.
+    # Format: blocks separated by a blank line. First line of each block:
+    # "Role | Organization | Date range". Following lines are bullets.
+    experience = []
+    if profile and profile.experience:
+        blocks = profile.experience.split("\n\n")
+        for block in blocks:
+            lines = [l.strip() for l in block.splitlines() if l.strip()]
+            if not lines:
+                continue
+            first = lines[0]
+            parts = first.split("|")
+            entry = {
+                "role": parts[0].strip() if len(parts) > 0 else "",
+            }
+            if len(parts) > 1:
+                entry["company"] = parts[1].strip()
+            if len(parts) > 2:
+                entry["duration"] = parts[2].strip()
+            entry["bullets"] = lines[1:]
+            experience.append(entry)
+
+    # Education — from about.Education model
+    education = []
+    if Education:
+        try:
+            for edu in Education.objects.all():
+                education.append({
+                    "degree": edu.degree or "",
+                    "institution": edu.institution,
+                    "duration": edu.period or "",
+                })
+        except Exception:
+            pass
+    if not education:
+        education = [
+            {
+                "degree": "BSc in Computer Science & Engineering",
+                "institution": "East West University, Dhaka",
+                "duration": "Present",
+            },
+        ]
+
+    # Photo — local file path (Cloudinary images are skipped; the CV
+    # shows an initials placeholder instead).
+    photo = None
+    if profile and profile.photo:
+        try:
+            photo = profile.photo.path
+        except (NotImplementedError, ValueError, AttributeError):
+            photo = None
+
+    return {
+        "name": name,
+        "title": title,
+        "photo": photo,
+        "contact": contact,
+        "skills": skills,
+        "languages": languages,
+        "hobbies": hobbies,
+        "profile": profile_text,
+        "experience": experience,
+        "education": education,
+    }
+
+
+def build_cv_pdf(data, output_path=None):
+    """Build a CV PDF from the data dict.
+
+    Parameters:
+        data         dict with keys: name, title, photo, contact, skills,
+                     languages, hobbies, profile, experience, education
+        output_path  optional filename — if given, the PDF is ALSO saved
+                     to that file (used by the standalone CLI). The PDF
+                     is always built into an in-memory buffer regardless.
+
+    Returns:
+        (buffer, filename) — buffer is a BytesIO positioned at 0,
+        filename is a safe download filename derived from the name.
+    """
+    import io
+
     from reportlab.lib.pagesizes import A4
     from reportlab.lib.units import mm
     from reportlab.lib import colors
@@ -303,7 +468,8 @@ def build_cv_pdf(data, output_path="My-CV.pdf"):
                               id="main_later", leftPadding=0, rightPadding=0,
                               topPadding=0, bottomPadding=0)
 
-    doc = BaseDocTemplate(output_path, pagesize=A4, title=f"{name} — CV")
+    buf = io.BytesIO()
+    doc = BaseDocTemplate(buf, pagesize=A4, title=f"{name} — CV")
     doc.addPageTemplates([
         PageTemplate(id="Page1", frames=[main_frame_1], onPage=draw_sidebar),
         PageTemplate(id="Later", frames=[main_frame_later], onPage=draw_later_page),
@@ -353,11 +519,25 @@ def build_cv_pdf(data, output_path="My-CV.pdf"):
             story.append(KeepTogether(block))
 
     doc.build(story)
-    return output_path
+
+    # BaseDocTemplate wrote the PDF into our BytesIO buffer. Rewind it
+    # so the caller can read it.
+    buf.seek(0)
+
+    # Generate a safe download filename.
+    safe_name = (data.get("name") or "CV").replace(".", "").replace(" ", "-")
+    safe_name = "".join(c for c in safe_name if c.isalnum() or c == "-")
+    filename = f"{safe_name}-CV.pdf"
+
+    # If an output_path was given (standalone CLI mode), also save to file.
+    if output_path:
+        with open(output_path, "wb") as f:
+            f.write(buf.getvalue())
+
+    return buf, filename
 
 
 if __name__ == "__main__":
-    safe_name = CV_DATA["name"].replace(".", "").replace(" ", "-")
-    out_path = f"{safe_name}-CV.pdf"
-    build_cv_pdf(CV_DATA, out_path)
+    out_path = "My-CV.pdf"
+    buf, fname = build_cv_pdf(CV_DATA, out_path)
     print(f"Done! Saved as: {out_path}")
