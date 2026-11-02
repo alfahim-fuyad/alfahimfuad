@@ -22,6 +22,7 @@
 
   var openBtn = bubble;
   var closeBtn = document.getElementById('chatbotClose');
+  var clearBtn = document.getElementById('chatbotClear');
   var sendBtn = document.getElementById('chatbotSend');
   var input = document.getElementById('chatbotInput');
   var log = document.getElementById('chatbotLog');
@@ -83,6 +84,19 @@
 
   openBtn.addEventListener('click', openPanel);
   closeBtn.addEventListener('click', closePanel);
+
+  // "Clear all" button — wipes the conversation log + history, then
+  // re-seeds the welcome message so the bot greets the visitor again.
+  if (clearBtn) {
+    clearBtn.addEventListener('click', function () {
+      log.innerHTML = '';
+      history = [];
+      addMessage('assistant', WELCOME);
+      history.push({ role: 'assistant', content: WELCOME });
+      setStatus('');
+      if (input) input.focus();
+    });
+  }
 
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && panel.classList.contains('open')) {

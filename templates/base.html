@@ -200,7 +200,14 @@
           </span>
         </div>
       </div>
-      <button type="button" id="chatbotClose" class="chatbot-close" aria-label="Close chat">×</button>
+      <div class="chatbot-head-actions">
+        <button type="button" id="chatbotClear" class="chatbot-icon-btn" aria-label="Clear conversation" title="Clear all">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M10 11v6M14 11v6"/></svg>
+        </button>
+        <button type="button" id="chatbotClose" class="chatbot-icon-btn" aria-label="Close chat" title="Close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
     </header>
 
     <div id="chatbotLog" class="chatbot-log" aria-live="polite"></div>

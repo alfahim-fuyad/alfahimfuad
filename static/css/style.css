@@ -1750,24 +1750,50 @@ html[data-theme="dark"] .modal-x .close-x {
     color: #ef4444;
 }
 
-.chatbot-close {
+/* Header action buttons (clear + close) — shared style */
+.chatbot-head-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+.chatbot-icon-btn {
     width: 32px; height: 32px;
-    border-radius: 10px;
+    border-radius: 8px;
     background: transparent;
-    border: 1px solid var(--border-strong);
+    border: 1px solid transparent;
     color: var(--text-dim);
     cursor: pointer;
-    font-size: 1.15rem;
-    line-height: 1;
-    transition: background .2s, color .2s, transform .15s;
-    flex-shrink: 0;
     display: grid;
     place-items: center;
+    transition: background .2s, color .2s, border-color .2s, transform .15s;
+    flex-shrink: 0;
+}
+.chatbot-icon-btn:hover {
+    background: rgba(96, 165, 250, .12);
+    border-color: var(--border-strong);
+    color: var(--cyan);
+}
+.chatbot-icon-btn:active {
+    transform: scale(.92);
+}
+/* Keep the old .chatbot-close class working (for any code that still
+   references it) by aliasing it to the new shared style. */
+.chatbot-close {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: background .2s, color .2s, border-color .2s, transform .15s;
+    flex-shrink: 0;
 }
 .chatbot-close:hover {
     background: rgba(96, 165, 250, .12);
+    border-color: var(--border-strong);
     color: var(--cyan);
-    transform: rotate(90deg);
 }
 
 .chatbot-log {
@@ -3115,10 +3141,13 @@ html[data-theme="dark"] .modal-x .close-x {
 }
 .chatbot-head h3 { font-size: .94rem; }
 .chatbot-sub { font-size: .72rem; }
+.chatbot-icon-btn {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+}
 .chatbot-close {
     width: 30px; height: 30px;
-    font-size: 1rem;
-    border-radius: 10px;
+    border-radius: 8px;
 }
 
 .chatbot-log {
