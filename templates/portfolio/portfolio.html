@@ -12,9 +12,47 @@
     — push a new public repo and it shows up here automatically.
   </p>
 
-  <div class="project-grid">
+  {# ============== SEARCH + FILTER BAR ============== #}
+  <div class="proj-toolbar reveal" id="projToolbar">
+    <div class="proj-search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" id="projSearch" class="proj-search-input"
+             placeholder="Search projects by name or keyword…"
+             autocomplete="off" aria-label="Search projects">
+      <button type="button" id="projSearchClear" class="proj-search-clear" aria-label="Clear search" style="display:none;">×</button>
+    </div>
+
+    <div class="proj-filters">
+      <select id="projLangFilter" class="proj-select" aria-label="Filter by language">
+        <option value="">All languages</option>
+      </select>
+
+      <select id="projSort" class="proj-select" aria-label="Sort projects">
+        <option value="default">Sort: Default</option>
+        <option value="stars">Most stars</option>
+        <option value="name">Name (A → Z)</option>
+        <option value="updated">Recently updated</option>
+      </select>
+
+      <button type="button" id="projViewToggle" class="proj-view-toggle" aria-label="Toggle grid / list view" title="Grid / List view">
+        <svg class="icon-grid" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        <svg class="icon-list" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <p class="proj-count" id="projCount" aria-live="polite"></p>
+
+  <div class="project-grid" id="projectGrid">
     {% for repo in repos %}
-      <article class="project-card reveal" data-modal="projectModal{{ forloop.counter }}">
+      <article class="project-card reveal"
+               data-modal="projectModal{{ forloop.counter }}"
+               data-name="{{ repo.name|lower }}"
+               data-desc="{{ repo.description|lower|default:'' }}"
+               data-lang="{{ repo.language|default:'' }}"
+               data-stars="{{ repo.stars|default:'0' }}"
+               data-updated="{{ repo.updated_at|default:'' }}"
+               data-showcase="{{ repo.is_showcase|yesno:'1,0' }}">
         <div class="project-thumb {% if not repo.admin_image %}placeholder{% endif %}">
           {% if repo.admin_image %}
             <img src="{{ repo.admin_image }}" alt="{{ repo.name }}" loading="lazy">
@@ -139,10 +177,18 @@
       {% endwith %}
     </div>
   {% endif %}
+
+  {# "No results" empty state — shown by JS when search/filter hides everything #}
+  <div class="proj-no-results" id="projNoResults" style="display:none;">
+    <h3>No projects match your search</h3>
+    <p>Try a different keyword or clear the filters.</p>
+    <button type="button" id="projReset" class="btn btn-ghost btn-sm">Clear filters</button>
+  </div>
 </section>
 {% endblock %}
 
 {% block page_js %}
+<script src="{% static 'js/projects.js' %}" defer></script>
 <script>
   (function () {
     document.querySelectorAll('[data-modal]').forEach(function (card) {
